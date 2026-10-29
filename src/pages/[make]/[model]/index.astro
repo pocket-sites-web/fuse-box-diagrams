@@ -1,0 +1,18 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getMakes, yearRange, type Model } from '../../../lib/data';
+export function getStaticPaths() {
+  return getMakes().flatMap((mk) => mk.models.map((m) => ({ params: { make: mk.makeSlug, model: m.modelSlug }, props: { m } })));
+}
+const { m } = Astro.props as { m: Model };
+const name = `${m.make} ${m.model}`;
+const range = yearRange(m);
+---
+<Base title={`${name} Fuse Box Diagram (${range}): Every Year`} description={`${name} fuse box diagrams for ${range}. Pick your year to see the interior and under-hood fuse boxes, with amps and what each fuse protects.`}>
+  <section>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a>›<a href={`/${m.makeSlug}/`}>{m.make}</a>›<span>{m.model}</span></nav>
+    <h1>{name} fuse box diagram ({range})</h1>
+    <p class="lede">Pick your year. Each page has clickable diagrams of every fuse box on that year's {m.model}, drawn from its owner's manual.</p>
+  </section>
+  <ul class="link-grid">{m.years.map((y) => <li><a href={`/${m.makeSlug}/${m.modelSlug}/${y.year}/`}>{y.year} {m.model}<span class="sub">{y.boxes.map((b) => b.short).join(' · ')}</span></a></li>)}</ul>
+</Base>

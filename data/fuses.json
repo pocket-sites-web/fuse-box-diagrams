@@ -1,0 +1,491 @@
+[
+ {
+  "make": "Ford",
+  "model": "F-150",
+  "year": 2006,
+  "source_name": "2006 Ford F-150 Owner's Guide",
+  "sample": true,
+  "box_key": "interior",
+  "box": "Passenger compartment fuse panel",
+  "short": "Interior panel",
+  "location": "Driver's footwell, left of the brake pedal, behind a pull-off cover.",
+  "locator": "driver-footwell",
+  "layout": "ford-f150-2004-interior",
+  "page": "214",
+  "fuses": [
+   {
+    "slot": "1",
+    "amps": 30,
+    "type": "mini",
+    "circuit": "Moonroof"
+   },
+   {
+    "slot": "2",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Brake lamp switch, brake lamps",
+    "tags": "brake lights stop"
+   },
+   {
+    "slot": "3",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Upfitter relay"
+   },
+   {
+    "slot": "4",
+    "amps": 30,
+    "type": "mini",
+    "circuit": "Rear power window",
+    "tags": "windows"
+   },
+   {
+    "slot": "5",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Instrument cluster, 4x4 module",
+    "tags": "4wd gauges dash"
+   },
+   {
+    "slot": "6",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "Turn signals, hazard lamps",
+    "tags": "indicators blinker"
+   },
+   {
+    "slot": "7",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Left low-beam headlamp",
+    "tags": "headlights headlamp"
+   },
+   {
+    "slot": "8",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Right low-beam headlamp",
+    "tags": "headlights headlamp"
+   },
+   {
+    "slot": "9",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Interior and puddle lamps",
+    "tags": "dome light courtesy"
+   },
+   {
+    "slot": "10",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Switch backlighting",
+    "tags": "illumination dash lights"
+   },
+   {
+    "slot": "11",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Transfer case, 4x4 switch",
+    "tags": "4wd 4x4 four wheel drive"
+   },
+   {
+    "slot": "12",
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "Power mirrors",
+    "tags": "mirror"
+   },
+   {
+    "slot": "13",
+    "amps": 5,
+    "type": "mini",
+    "circuit": "Instrument cluster memory",
+    "tags": "gauges dash"
+   },
+   {
+    "slot": "14",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Radio, audio unit",
+    "tags": "stereo sound speakers"
+   },
+   {
+    "slot": "15",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Climate control head",
+    "tags": "a/c ac air conditioning heater"
+   },
+   {
+    "slot": "16",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Trailer tow park lamps",
+    "tags": "trailer towing"
+   },
+   {
+    "slot": "17",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "Power door locks",
+    "tags": "locks"
+   },
+   {
+    "slot": "18",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "Heated seats",
+    "tags": "seat"
+   },
+   {
+    "slot": "19",
+    "amps": 25,
+    "type": "mini",
+    "circuit": "Power seats",
+    "tags": "seat"
+   },
+   {
+    "slot": "20",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Diagnostic port (OBD-II)",
+    "tags": "obd scanner"
+   },
+   {
+    "slot": "21",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Fog lamps",
+    "tags": "fog lights"
+   },
+   {
+    "slot": "22",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Park lamps",
+    "tags": "parking lights"
+   },
+   {
+    "slot": "23",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "High-beam headlamps",
+    "tags": "headlights headlamp brights"
+   },
+   {
+    "slot": "24",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "Front power point (cigar lighter)",
+    "tags": "cigarette lighter power outlet 12v charger socket"
+   },
+   {
+    "slot": "25",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Reverse lamps",
+    "tags": "back up lights backup"
+   },
+   {
+    "slot": "26",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Airbag control module",
+    "tags": "airbag restraints srs"
+   },
+   {
+    "slot": "27",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "Ignition switch feed",
+    "tags": "start ignition"
+   },
+   {
+    "slot": "28",
+    "amps": 5,
+    "type": "mini",
+    "circuit": "Radio start signal",
+    "tags": "stereo audio"
+   },
+   {
+    "slot": "29",
+    "amps": 5,
+    "type": "mini",
+    "circuit": "Cluster (run/start)",
+    "tags": "gauges dash"
+   },
+   {
+    "slot": "30",
+    "amps": 5,
+    "type": "mini",
+    "circuit": "Overdrive cancel switch",
+    "tags": "transmission"
+   },
+   {
+    "slot": "31",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Trailer brake controller",
+    "tags": "trailer towing brakes"
+   },
+   {
+    "slot": "32",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Adjustable pedals",
+    "tags": "pedal"
+   },
+   {
+    "slot": "33",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Steering wheel controls",
+    "tags": "cruise control"
+   },
+   {
+    "slot": "34",
+    "amps": null,
+    "type": "mini",
+    "circuit": "Not used"
+   },
+   {
+    "slot": "35",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Passenger airbag off lamp",
+    "tags": "airbag srs"
+   },
+   {
+    "slot": "36",
+    "amps": 5,
+    "type": "mini",
+    "circuit": "Anti-theft (PATS) transceiver",
+    "tags": "key immobilizer wont start no start"
+   },
+   {
+    "slot": "R1",
+    "amps": null,
+    "type": "relay",
+    "circuit": "Accessory delay relay",
+    "tags": "windows radio"
+   },
+   {
+    "slot": "R2",
+    "amps": null,
+    "type": "relay",
+    "circuit": "Rear window defrost relay",
+    "tags": "defroster"
+   }
+  ]
+ },
+ {
+  "make": "Ford",
+  "model": "F-150",
+  "year": 2006,
+  "source_name": "2006 Ford F-150 Owner's Guide",
+  "sample": true,
+  "box_key": "hood",
+  "box": "Power distribution box",
+  "short": "Under hood",
+  "location": "Engine bay, driver's side, next to the battery. Unclip the black lid.",
+  "locator": "engine-driver",
+  "layout": "ford-f150-2004-pdb",
+  "page": "217",
+  "fuses": [
+   {
+    "slot": "1",
+    "amps": 50,
+    "type": "jcase",
+    "circuit": "ABS pump motor",
+    "tags": "brakes abs"
+   },
+   {
+    "slot": "2",
+    "amps": 40,
+    "type": "jcase",
+    "circuit": "Blower motor",
+    "tags": "a/c ac heater fan air conditioning"
+   },
+   {
+    "slot": "3",
+    "amps": 30,
+    "type": "jcase",
+    "circuit": "Starter relay",
+    "tags": "start wont start no start crank"
+   },
+   {
+    "slot": "4",
+    "amps": 60,
+    "type": "jcase",
+    "circuit": "Interior fuse panel feed"
+   },
+   {
+    "slot": "5",
+    "amps": 30,
+    "type": "jcase",
+    "circuit": "Trailer tow battery charge",
+    "tags": "trailer towing"
+   },
+   {
+    "slot": "6",
+    "amps": 50,
+    "type": "jcase",
+    "circuit": "Ignition switch feed",
+    "tags": "start"
+   },
+   {
+    "slot": "7",
+    "amps": 30,
+    "type": "jcase",
+    "circuit": "Power seats",
+    "tags": "seat"
+   },
+   {
+    "slot": "8",
+    "amps": 30,
+    "type": "jcase",
+    "circuit": "Windshield wipers",
+    "tags": "wiper washer"
+   },
+   {
+    "slot": "9",
+    "amps": 40,
+    "type": "jcase",
+    "circuit": "Trailer electric brakes",
+    "tags": "trailer towing"
+   },
+   {
+    "slot": "10",
+    "amps": 20,
+    "type": "jcase",
+    "circuit": "Auxiliary power point",
+    "tags": "cigarette lighter power outlet 12v charger socket"
+   },
+   {
+    "slot": "11",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "Fuel pump",
+    "tags": "fuel wont start no start"
+   },
+   {
+    "slot": "12",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Horn"
+   },
+   {
+    "slot": "13",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "A/C clutch",
+    "tags": "ac air conditioning"
+   },
+   {
+    "slot": "14",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "Engine computer (PCM)",
+    "tags": "pcm ecu ecm engine"
+   },
+   {
+    "slot": "15",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Trailer right stop/turn",
+    "tags": "trailer towing brake lights"
+   },
+   {
+    "slot": "16",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Trailer left stop/turn",
+    "tags": "trailer towing brake lights"
+   },
+   {
+    "slot": "17",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "PCM keep-alive power",
+    "tags": "pcm ecu engine"
+   },
+   {
+    "slot": "18",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "Fuel injectors, ignition coils",
+    "tags": "engine misfire"
+   },
+   {
+    "slot": "19",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "Rear power point",
+    "tags": "cigarette lighter power outlet 12v charger socket"
+   },
+   {
+    "slot": "20",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Alternator sense",
+    "tags": "charging battery light"
+   },
+   {
+    "slot": "21",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "4x4 shift motor",
+    "tags": "4wd 4x4 four wheel drive"
+   },
+   {
+    "slot": "22",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "Back-up lamps (trailer)",
+    "tags": "reverse trailer"
+   },
+   {
+    "slot": "R1",
+    "amps": null,
+    "type": "relay",
+    "circuit": "Starter relay",
+    "tags": "start wont start crank"
+   },
+   {
+    "slot": "R2",
+    "amps": null,
+    "type": "relay",
+    "circuit": "Fuel pump relay",
+    "tags": "fuel wont start"
+   },
+   {
+    "slot": "R3",
+    "amps": null,
+    "type": "relay",
+    "circuit": "Blower motor relay",
+    "tags": "a/c heater fan"
+   },
+   {
+    "slot": "R4",
+    "amps": null,
+    "type": "relay",
+    "circuit": "Horn relay",
+    "tags": "horn"
+   },
+   {
+    "slot": "R5",
+    "amps": null,
+    "type": "relay",
+    "circuit": "A/C clutch relay",
+    "tags": "ac air conditioning"
+   },
+   {
+    "slot": "R6",
+    "amps": null,
+    "type": "relay",
+    "circuit": "PCM power relay",
+    "tags": "engine computer"
+   }
+  ]
+ }
+]

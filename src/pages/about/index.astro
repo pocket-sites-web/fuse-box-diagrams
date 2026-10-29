@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE_NAME } from '../../lib/site';
+---
+<Base title={`About ${SITE_NAME}`} description="Why we draw our own fuse box diagrams from official owner's manuals.">
+  <section class="prose">
+    <h1>About</h1>
+    <p>{SITE_NAME} has one job: show you exactly which fuse does what on your vehicle, for your exact year.</p>
+    <p>Every diagram is drawn by us from the fuse section of the official owner's manual, then checked slot by slot against the manual's own drawing. Each page names the manual and page it came from. If a year hasn't been checked, we don't publish it.</p>
+  </section>
+</Base>

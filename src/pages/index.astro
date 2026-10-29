@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import { getMakes, getYearPages } from '../lib/data';
+import { SITE_NAME } from '../lib/site';
+const makes = getMakes();
+const popular = getYearPages().slice(0, 12);
+---
+<Base title={`${SITE_NAME}: Fuse Box Diagrams by Year, Make and Model`} description="Clickable fuse box diagrams for your exact year, make and model. Find which fuse runs the radio, lighter or fuel pump, with amps, from the owner's manual.">
+  <section>
+    <h1>Fuse box diagrams for your exact vehicle</h1>
+    <p class="lede">Pick your make, model and year. Every diagram is drawn from the owner's manual: tap a fuse to see what it protects, or search for the thing that stopped working.</p>
+  </section>
+  <section class="card picker" style="display:grid;gap:10px">
+    <h2>Find your diagram</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select id="pick-make" aria-label="Make"><option value="">Make</option>{makes.map((m) => <option value={m.makeSlug}>{m.make}</option>)}</select>
+      <select id="pick-model" aria-label="Model" disabled><option value="">Model</option></select>
+      <select id="pick-year" aria-label="Year" disabled><option value="">Year</option></select>
+    </div>
+  </section>
+  <section>
+    <h2>Popular diagrams</h2>
+    <ul class="link-grid">{popular.map((p) => <li><a href={`/${p.makeSlug}/${p.modelSlug}/${p.year}/`}>{p.year} {p.make} {p.model}<span class="sub">{p.boxes.length} fuse boxes</span></a></li>)}</ul>
+  </section>
+  <section>
+    <h2>Makes</h2>
+    <ul class="link-grid">{makes.map((m) => <li><a href={`/${m.makeSlug}/`}>{m.make}<span class="sub">{m.models.length} models</span></a></li>)}</ul>
+  </section>
+</Base>
+<style>select{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-width:0;flex:1 1 140px}</style>
+<script define:vars={{ tree: Object.fromEntries(makes.map((mk) => [mk.makeSlug, mk.models.map((m) => ({ slug: m.modelSlug, name: m.model, years: m.years.map((y) => y.year) }))])) }}>
+  const mk = document.getElementById('pick-make'), md = document.getElementById('pick-model'), yr = document.getElementById('pick-year');
+  mk.onchange = () => {
+    md.innerHTML = '<option value="">Model</option>' + (tree[mk.value] || []).map((m) => `<option value="${m.slug}">${m.name}</option>`).join('');
+    md.disabled = !mk.value; yr.disabled = true; yr.innerHTML = '<option value="">Year</option>';
+  };
+  md.onchange = () => {
+    const m = (tree[mk.value] || []).find((x) => x.slug === md.value);
+    yr.innerHTML = '<option value="">Year</option>' + (m ? m.years.map((y) => `<option>${y}</option>`).join('') : '');
+    yr.disabled = !m;
+  };
+  yr.onchange = () => { if (yr.value) location.href = `/${mk.value}/${md.value}/${yr.value}/`; };
+</script>

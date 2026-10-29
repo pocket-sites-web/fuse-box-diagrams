@@ -1,0 +1,208 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import { getMakes, getLayout, fuseColour, sortSlots, TYPE_NAMES, LEGENDS, type YearPage, type Model } from '../../../../lib/data';
+import { boxSvg, partIcon, locatorSvg } from '../../../../lib/fusebox';
+import { amazonUrl, SITE_URL } from '../../../../lib/site';
+
+export function getStaticPaths() {
+  return getMakes().flatMap((mk) =>
+    mk.models.flatMap((m) =>
+      m.years.map((p) => ({ params: { make: mk.makeSlug, model: m.modelSlug, year: String(p.year) }, props: { p, m } })),
+    ),
+  );
+}
+const { p, m } = Astro.props as { p: YearPage; m: Model };
+const name = `${p.year} ${p.make} ${p.model}`;
+const boxNames = p.boxes.map((b) => b.short.toLowerCase()).join(' and ');
+const title = `${name} Fuse Box Diagram (${p.boxes.map((b) => b.short).join(' & ')})`;
+const fuseCount = p.boxes.reduce((a, b) => a + b.fuses.filter((f) => f.type !== 'relay').length, 0);
+const description = `Clickable ${name} fuse box diagrams for the ${boxNames}: all ${fuseCount} fuses with amps and what each one protects, from the owner's manual.`;
+
+const shopFor = (type: string) => (type === 'relay' ? 'automotive relay' : type === 'jcase' ? 'J-case cartridge fuse kit' : type === 'maxi' ? 'maxi blade fuse kit' : type === 'micro2' ? 'micro2 fuse kit' : type === 'atm' ? 'ATO blade fuse kit' : 'mini blade fuse kit');
+// Data for the client script: one entry per box, fuses with pre-drawn icons.
+const boxes = p.boxes.map((b) => ({
+  key: b.box_key,
+  short: b.short,
+  name: b.box,
+  page: b.page,
+  fuses: [...b.fuses].sort((x, y) => sortSlots(x.slot, y.slot)).map((f) => {
+    const c = fuseColour(f.type, f.amps);
+    return { ...f, typeName: TYPE_NAMES[f.type], colour: c?.[0] ?? null, colourName: c?.[1] ?? null, icon: partIcon(f), shop: amazonUrl(shopFor(f.type)), shopLabel: shopFor(f.type) };
+  }),
+}));
+const first = boxes[0];
+const firstFuse = first.fuses.find((f) => f.amps) ?? first.fuses[0];
+const chips = ['Radio', 'Power point', 'Fuel pump', 'Brake lights', 'Horn', 'Wipers', 'A/C', 'Headlamp'];
+const site = SITE_URL;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${site}/` },
+      { '@type': 'ListItem', position: 2, name: p.make, item: `${site}/${p.makeSlug}/` },
+      { '@type': 'ListItem', position: 3, name: p.model, item: `${site}/${p.makeSlug}/${p.modelSlug}/` },
+      { '@type': 'ListItem', position: 4, name: String(p.year), item: `${site}/${p.makeSlug}/${p.modelSlug}/${p.year}/` },
+    ],
+  },
+];
+const years = [...m.years].sort((a, b) => a.year - b.year);
+---
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <section>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a>›<a href={`/${p.makeSlug}/`}>{p.make}</a>›<a href={`/${p.makeSlug}/${p.modelSlug}/`}>{p.model}</a>›<span>{p.year}</span></nav>
+    <h1>{name} Fuse Box Diagram</h1>
+    <p class="lede">The {p.boxes.length === 1 ? 'fuse box' : `${p.boxes.length} fuse boxes`} on the {name}, with every fuse and relay. Tap a fuse to see what it protects, or search for the thing that stopped working.</p>
+    <div class="years" style="margin-top:16px"><span class="label">Year</span>
+      {years.map((y) => (y.year === p.year ? <span class="cur" aria-current="page">{y.year}</span> : <a href={`/${p.makeSlug}/${p.modelSlug}/${y.year}/`}>{y.year}</a>))}
+      <a href={`/${p.makeSlug}/${p.modelSlug}/`}>All years</a>
+    </div>
+  </section>
+
+  <div class="fb" id="fb" data-boxes={JSON.stringify(boxes)}>
+    <div class="finder card">
+      <label for="q">What stopped working?</label>
+      <div class="search">
+        <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
+        <input id="q" type="search" placeholder="Try radio, cigarette lighter, fuel pump…" autocomplete="off" />
+        <button class="clear" id="clear" type="button" aria-label="Clear search" hidden>×</button>
+      </div>
+      <div class="chips" id="chips">{chips.map((c) => <button type="button" class="chip" data-q={c}>{c}</button>)}</div>
+      <div class="result" id="result" aria-live="polite"></div>
+    </div>
+
+    <div class="fb-main">
+      <div class="stage">
+        <div class="tabs" role="tablist">
+          {p.boxes.map((b, i) => {
+            const fz = b.fuses.filter((f) => f.type !== 'relay').length;
+            return <button type="button" role="tab" data-box={b.box_key} aria-selected={i === 0 ? 'true' : 'false'}>{b.short}<span class="n">{fz} fuses{b.fuses.length - fz ? ` · ${b.fuses.length - fz} relays` : ''}</span><span class="hit" hidden></span></button>;
+          })}
+        </div>
+        {p.boxes.map((b, i) => (
+          <div class="boxview" data-box={b.box_key} hidden={i !== 0}>
+            <div class="where card"><Fragment set:html={locatorSvg(b.locator)} /><p><strong>Where it is</strong>{b.location}</p></div>
+            <div class="diagram"><Fragment set:html={boxSvg(b, getLayout(b.layout))} /></div>
+          </div>
+        ))}
+        <p class="hint small muted">Drawn as you see it with the cover off, front of the vehicle at the top.</p>
+      </div>
+      <aside class="panel" id="panel" aria-live="polite">
+        <div class="head"><Fragment set:html={firstFuse.icon} /><div><div class="slotno">{first.short} · Fuse {firstFuse.slot}</div><h2>{firstFuse.circuit}</h2></div></div>
+        <dl><dt>Rating</dt><dd>{firstFuse.amps} amps</dd><dt>Type</dt><dd>{firstFuse.typeName}</dd><dt>Box</dt><dd>{first.name}</dd></dl>
+      </aside>
+    </div>
+
+    {boxes.map((b) => (
+      <section class="tbl" data-box={b.key}>
+        <h2>{p.year} {p.model} {b.short.toLowerCase()} fuses</h2>
+        <p class="small muted" style="margin:0 0 12px">{b.name}. Tap a row to find it on the diagram.</p>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>No.</th><th>Amps</th><th class="type">Type</th><th>Protects</th></tr></thead>
+            <tbody>
+              {b.fuses.map((f) => (
+                <tr data-box={b.key} data-slot={f.slot} id={`${b.key}-${f.slot}`.toLowerCase()} tabindex="0">
+                  <td class="no">{f.slot}</td>
+                  <td class="amp">{f.amps ? <Fragment><span class="swatch" style={`background:${f.colour}`}></span>{f.amps}A</Fragment> : '–'}</td>
+                  <td class="type">{f.typeName}</td>
+                  <td>{f.circuit}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <section class="legend">
+    <div class="card"><h3>Blade fuse colours</h3><ul>{Object.entries(LEGENDS.blade).filter(([a]) => +a >= 5).sort((a, b) => +a[0] - +b[0]).map(([a, [c, n]]) => <li><i style={`background:${c}`}></i>{a}A {n}</li>)}</ul></div>
+    <div class="card"><h3>Cartridge (J-case) colours</h3><ul>{Object.entries(LEGENDS.jcase).map(([a, [c, n]]) => <li><i style={`background:${c}`}></i>{a}A {n}</li>)}</ul></div>
+  </section>
+
+  <section class="small muted">
+    <p style="margin:0 0 6px"><strong>Source:</strong> {p.boxes[0].source_name}, "Fuses" section{p.boxes.map((b) => b.page).filter(Boolean).length ? `, p. ${[...new Set(p.boxes.map((b) => b.page))].join(' and ')}` : ''}.{p.sample && ' Sample data for this preview: not yet checked against the manual.'}</p>
+    <p style="margin:0">Always replace a fuse with one of the same amp rating. If a new fuse blows straight away, the circuit has a fault.</p>
+  </section>
+</Base>
+
+<style is:global>
+.fb{display:grid;gap:20px}
+.finder{display:grid;gap:12px}
+.finder label{font-family:var(--display);font-weight:600;font-size:19px;text-transform:uppercase;letter-spacing:.03em}
+.search{position:relative}
+.search input{width:100%;font:inherit;font-size:16px;padding:12px 40px 12px 42px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.search input::-webkit-search-cancel-button{display:none}
+.search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+.search .ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search .clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer;padding:4px 8px}
+.result{font-size:14px;color:var(--muted);min-height:1.5em}
+.result b{color:var(--ink)}
+.result button{font:inherit;font-weight:600;color:var(--accent-ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.fb-main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+@media (max-width:900px){.fb-main{grid-template-columns:minmax(0,1fr)}}
+.stage{min-width:0}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:12px;overflow-x:auto}
+.tabs button{font-family:var(--display);font-weight:600;font-size:18px;text-transform:uppercase;letter-spacing:.03em;border:0;background:none;color:var(--muted);padding:8px 12px 10px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs .n{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:6px;letter-spacing:0}
+.tabs .hit{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:var(--accent);color:#1b1300;font-family:var(--mono);font-size:11.5px;margin-left:6px;letter-spacing:0}
+.where{display:flex;gap:14px;align-items:center;margin-bottom:12px;padding:12px 14px}
+.where svg{flex:none}
+.where p{margin:0;font-size:14px;min-width:0}
+.where strong{display:block;font-family:var(--display);font-size:17px;text-transform:uppercase;letter-spacing:.03em}
+.diagram{background:radial-gradient(120% 90% at 30% 0%,#2a3037 0%,#1C2126 55%);border-radius:16px;padding:10px;box-shadow:0 18px 40px -22px rgba(0,0,0,.55)}
+.diagram svg{display:block;width:100%;max-width:720px;height:auto;margin:0 auto}
+.hint{margin:8px 2px 0}
+.slot{cursor:pointer;outline:none}
+.slot .part{transition:transform .22s cubic-bezier(.3,1.4,.5,1),filter .2s;transform-box:fill-box;transform-origin:50% 60%}
+.slot:hover .part{transform:translateY(-2px);filter:brightness(1.12)}
+.slot.sel .part{transform:translateY(-6px) scale(1.07);filter:brightness(1.15) drop-shadow(0 6px 6px rgba(0,0,0,.6))}
+.slot .ring{opacity:0;transition:opacity .2s}
+.slot.sel .ring{opacity:1;animation:fb-pulse 1.6s ease-in-out infinite}
+.slot.match .ring,.slot:focus-visible .ring{opacity:.9}
+.slot.sel .num,.slot.match .num{fill:var(--accent)}
+svg.searching .slot{transition:opacity .25s}
+svg.searching .slot:not(.match):not(.sel){opacity:.22}
+.pin-pulse{animation:fb-pin 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes fb-pulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.35}}
+@keyframes fb-pin{0%,100%{transform:scale(.7)}50%{transform:scale(1.2)}}
+@media (prefers-reduced-motion:reduce){.slot .part{transition:none}.slot.sel .ring,.pin-pulse{animation:none}}
+.panel{position:sticky;top:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+@media (max-width:900px){.panel{position:static}}
+.panel .head{display:flex;gap:14px;align-items:center;padding:16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--accent-soft),transparent)}
+.panel .head svg{flex:none}
+.panel .slotno{font-family:var(--mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.panel h2{font-size:26px;line-height:1.05;margin:2px 0 0}
+.panel dl{margin:0;padding:6px 16px 4px;display:grid;grid-template-columns:auto 1fr;gap:0 14px}
+.panel dt,.panel dd{padding:9px 0;border-bottom:1px dashed var(--line);margin:0;font-size:14px}
+.panel dt{color:var(--muted)}
+.panel dd{font-weight:500;text-align:right}
+.panel dl > :nth-last-child(-n+2){border-bottom:0}
+.panel .tip{margin:0 16px 14px;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:13.5px;color:var(--muted)}
+.panel .tip b{color:var(--ink)}
+.buy{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 16px 16px;padding:12px;border-radius:10px;background:var(--ink);color:var(--surface);text-decoration:none;font-weight:600;font-size:14.5px}
+.buy small{font-weight:400;opacity:.7}
+.panel .nav{display:flex;justify-content:space-between;padding:0 16px 14px;gap:8px}
+.panel .nav button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 10px;cursor:pointer}
+.tbl table{min-width:520px}
+.tbl tbody tr{cursor:pointer;transition:background .15s}
+.tbl tbody tr:hover{background:var(--bg)}
+.tbl tbody tr.sel{background:var(--accent-soft)}
+.tbl tbody tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.tbl tbody tr.dim{opacity:.35}
+td.no{font-family:var(--mono);font-weight:600;width:64px}
+td.amp{font-family:var(--mono);white-space:nowrap;width:96px}
+td.type{color:var(--muted);white-space:nowrap;width:170px}
+@media (max-width:600px){.tbl table{min-width:0}.tbl th.type,.tbl td.type{display:none}.tbl td{padding:9px 10px}.tabs .n{display:none}.diagram{padding:4px;border-radius:12px}}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.legend ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px;background:var(--bg);border-radius:6px;padding:4px 8px}
+.legend li i{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.25);display:inline-block}
+</style>
+
+<script>
+  import { initFuseBox } from '../../../../scripts/fusebox';
+  initFuseBox(document.getElementById('fb')!);
+</script>

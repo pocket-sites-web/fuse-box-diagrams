@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getMakes, yearRange, type Make } from '../../lib/data';
+export function getStaticPaths() {
+  return getMakes().map((mk) => ({ params: { make: mk.makeSlug }, props: { mk } }));
+}
+const { mk } = Astro.props as { mk: Make };
+---
+<Base title={`${mk.make} Fuse Box Diagrams by Model and Year`} description={`Clickable ${mk.make} fuse box diagrams for ${mk.models.map((m) => m.model).join(', ')}: every fuse, its amps and what it protects, from the owner's manual.`}>
+  <section>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a>›<span>{mk.make}</span></nav>
+    <h1>{mk.make} fuse box diagrams</h1>
+    <p class="lede">Pick your {mk.make} model to see its fuse boxes year by year.</p>
+  </section>
+  <ul class="link-grid">{mk.models.map((m) => <li><a href={`/${mk.makeSlug}/${m.modelSlug}/`}>{m.model}<span class="sub">{yearRange(m)}</span></a></li>)}</ul>
+</Base>

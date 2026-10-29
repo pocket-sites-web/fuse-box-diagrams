@@ -1,0 +1,139 @@
+// Interaction for the year page: box tabs, tap-to-select, circuit search, synced table and detail panel.
+interface F {
+  slot: string; amps: number | null; type: string; circuit: string; tags?: string;
+  typeName: string; colour: string | null; colourName: string | null; icon: string; shop: string; shopLabel: string;
+}
+interface B { key: string; short: string; name: string; page: string; fuses: F[] }
+
+const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+export function initFuseBox(root: HTMLElement) {
+  const boxes: B[] = JSON.parse(root.dataset.boxes!);
+  const byKey = new Map(boxes.map((b) => [b.key, b]));
+  const firstWithAmps = (b: B) => (b.fuses.find((f) => f.amps) ?? b.fuses[0]).slot;
+  const state = { box: boxes[0].key, q: '', sel: Object.fromEntries(boxes.map((b) => [b.key, firstWithAmps(b)])) as Record<string, string> };
+  const $ = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+  const $$ = <T extends Element = HTMLElement>(s: string) => [...root.querySelectorAll<T>(s)];
+  const input = $<HTMLInputElement>('#q');
+
+  const matches = (key: string) => {
+    const q = state.q.trim().toLowerCase();
+    if (!q) return [];
+    const words = q.split(/\s+/);
+    return byKey.get(key)!.fuses
+      .filter((f) => f.circuit !== 'Not used' && words.every((w) => `${f.circuit} ${f.tags ?? ''}`.toLowerCase().includes(w)))
+      .map((f) => f.slot);
+  };
+
+  function panel() {
+    const b = byKey.get(state.box)!, id = state.sel[b.key];
+    const list = b.fuses, idx = list.findIndex((f) => f.slot === id), f = list[idx];
+    const relay = f.type === 'relay';
+    const tip = relay
+      ? '<b>Testing a relay:</b> swap it with an identical relay from the same box. If the fault moves, the relay is bad.'
+      : f.amps ? `<b>Replace with:</b> a ${f.amps}A ${f.typeName.toLowerCase()} (${(f.colourName ?? '').toLowerCase()}). Never fit a higher rating.` : '<b>Empty slot.</b> Nothing on this vehicle uses it.';
+    const prev = list[(idx - 1 + list.length) % list.length].slot, next = list[(idx + 1) % list.length].slot;
+    $('#panel').innerHTML = `
+      <div class="head">${f.icon}<div><div class="slotno">${esc(b.short)} · ${relay ? 'Relay' : 'Fuse'} ${esc(f.slot)}</div><h2>${esc(f.circuit)}</h2></div></div>
+      <dl>
+        <dt>Rating</dt><dd>${f.amps ? `${f.amps} amps` : '–'}</dd>
+        <dt>Type</dt><dd>${esc(f.typeName)}</dd>
+        ${f.colour ? `<dt>Colour</dt><dd><span class="swatch" style="background:${f.colour}"></span>${esc(f.colourName ?? '')}</dd>` : ''}
+        <dt>Box</dt><dd>${esc(b.name)}</dd>
+        ${b.page ? `<dt>Manual</dt><dd>p. ${esc(b.page)}</dd>` : ''}
+      </dl>
+      <p class="tip">${tip}</p>
+      ${f.amps || relay ? `<a class="buy" href="${f.shop}" target="_blank" rel="nofollow sponsored noopener">Shop ${esc(f.shopLabel)}s on Amazon <small>(affiliate)</small></a>` : ''}
+      <div class="nav"><button type="button" data-go="${esc(prev)}">← ${esc(prev)}</button><button type="button" data-go="${esc(next)}">${esc(next)} →</button></div>`;
+    $$('#panel [data-go]').forEach((btn) => btn.addEventListener('click', () => select(btn.dataset.go!)));
+  }
+
+  function marks() {
+    const searching = !!state.q.trim();
+    for (const b of boxes) {
+      const m = new Set(matches(b.key));
+      const svg = root.querySelector(`.boxview[data-box="${b.key}"] .diagram svg`);
+      svg?.classList.toggle('searching', searching);
+      svg?.querySelectorAll<SVGGElement>('.slot').forEach((s) => {
+        s.classList.toggle('match', m.has(s.dataset.slot!));
+        s.classList.toggle('sel', b.key === state.box && s.dataset.slot === state.sel[b.key]);
+      });
+      $$<HTMLTableRowElement>(`tbody tr[data-box="${b.key}"]`).forEach((tr) => {
+        tr.classList.toggle('sel', b.key === state.box && tr.dataset.slot === state.sel[b.key]);
+        tr.classList.toggle('dim', searching && !m.has(tr.dataset.slot!));
+      });
+    }
+    $$<HTMLButtonElement>('.tabs button').forEach((t) => {
+      const on = t.dataset.box === state.box;
+      t.setAttribute('aria-selected', String(on));
+      const hit = t.querySelector<HTMLElement>('.hit')!, n = matches(t.dataset.box!).length;
+      hit.hidden = !(searching && n);
+      hit.textContent = String(n);
+    });
+    $$('.boxview').forEach((v) => (v.hidden = v.dataset.box !== state.box));
+    $$<HTMLButtonElement>('#chips .chip').forEach((c) => c.classList.toggle('on', c.dataset.q!.toLowerCase() === state.q.trim().toLowerCase()));
+  }
+
+  function result() {
+    const q = state.q.trim(), r = $('#result');
+    $('#clear').hidden = !q;
+    if (!q) { r.textContent = ''; return; }
+    const here = matches(state.box);
+    const others = boxes.filter((b) => b.key !== state.box).map((b) => ({ b, m: matches(b.key) })).filter((o) => o.m.length);
+    if (!here.length && !others.length) { r.innerHTML = `No fuse mentions <b>${esc(q)}</b>. Try a simpler word, like "lights" or "power".`; return; }
+    const cur = byKey.get(state.box)!;
+    let s = here.length
+      ? `<b>${here.length}</b> in the ${esc(cur.short.toLowerCase())}: ${here.map((id) => `<button type="button" data-goto="${cur.key}:${esc(id)}">${esc(id)}</button>`).join(', ')}.`
+      : `None in the ${esc(cur.short.toLowerCase())}.`;
+    for (const o of others) s += ` <b>${o.m.length}</b> more in the <button type="button" data-goto="${o.b.key}:${esc(o.m[0])}">${esc(o.b.short.toLowerCase())}</button>.`;
+    r.innerHTML = s;
+    r.querySelectorAll<HTMLButtonElement>('[data-goto]').forEach((b) => b.addEventListener('click', () => {
+      const [k, id] = b.dataset.goto!.split(':');
+      state.box = k; state.sel[k] = id; render();
+    }));
+  }
+
+  function render() { panel(); marks(); result(); }
+  function select(id: string) { state.sel[state.box] = id; panel(); marks(); }
+
+  function setQuery(v: string) {
+    state.q = v; input.value = v;
+    if (v.trim()) {
+      let here = matches(state.box);
+      if (!here.length) {
+        const other = boxes.find((b) => matches(b.key).length);
+        if (other) { state.box = other.key; here = matches(other.key); }
+      }
+      if (here.length && !here.includes(state.sel[state.box])) state.sel[state.box] = here[0];
+    }
+    render();
+  }
+
+  root.querySelectorAll<SVGGElement>('.slot').forEach((g) => {
+    const box = g.closest<HTMLElement>('.boxview')!.dataset.box!;
+    const go = () => { state.box = box; select(g.dataset.slot!); };
+    g.addEventListener('click', go);
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+  $$<HTMLButtonElement>('.tabs button').forEach((t) => t.addEventListener('click', () => { state.box = t.dataset.box!; render(); }));
+  $$<HTMLTableRowElement>('tbody tr').forEach((tr) => {
+    const go = () => {
+      state.box = tr.dataset.box!; select(tr.dataset.slot!);
+      const d = root.querySelector(`.boxview[data-box="${state.box}"] .diagram`)!;
+      const top = d.getBoundingClientRect().top;
+      if (top < 0 || top > innerHeight * 0.6) d.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+    };
+    tr.addEventListener('click', go);
+    tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+  });
+  $$<HTMLButtonElement>('#chips .chip').forEach((c) => c.addEventListener('click', () => setQuery(c.classList.contains('on') ? '' : c.dataset.q!)));
+  let t: ReturnType<typeof setTimeout>;
+  input.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => setQuery(input.value), 120); });
+  $('#clear').addEventListener('click', () => { setQuery(''); input.focus(); });
+
+  // Deep link: #interior-14 selects that fuse.
+  const h = location.hash.slice(1).toLowerCase();
+  const hit = boxes.flatMap((b) => b.fuses.map((f) => ({ b, f }))).find(({ b, f }) => `${b.key}-${f.slot}`.toLowerCase() === h);
+  if (hit) { state.box = hit.b.key; state.sel[hit.b.key] = hit.f.slot; }
+  render();
+}
