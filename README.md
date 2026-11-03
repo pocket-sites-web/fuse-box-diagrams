@@ -8,7 +8,7 @@ Plan: `niche-research/fuse-box/01-site-plan.md` in the project files.
 In `src/lib/site.ts`: set `SITE_URL` and `SITE_NAME` for the chosen domain, then set `PREVIEW = false`. While `PREVIEW` is true every page is noindex, robots.txt blocks crawlers and a banner says the data is sample data.
 
 ## Data
-Both files come from the vehicle-specs scraper export. The 2006 F-150 in them now is **sample data** (`"sample": true`) for the design.
+Both files come from the vehicle-specs scraper export (first real box: 2013 Toyota Camry).
 
 `data/fuses.json`: one record per fuse box per vehicle year.
 
@@ -38,6 +38,15 @@ Both files come from the vehicle-specs scraper export. The 2006 F-150 in them no
 ```json
 { "ford-f150-2004-interior": { "puller": true, "rows": [["1","2","3"], ["R1","R2"]] } }
 ```
+
+Or, for a faithful copy of the manual's drawing, positions traced from the page image (drawing pixels, scaled by `sx`/`sy`). Slots without `s` are empty sockets; `t` sets the fuse size when the export doesn't:
+
+```json
+{ "toyota-camry-2012-cabin": { "sx": 2.2, "slots": [{ "s": "1", "x": 266, "y": 298, "t": "mini" }, { "x": 359, "y": 298, "t": "mini" }] } }
+```
+
+## Importing scraper data
+`python scripts/import-fuses.py path/to/export.json` merges an export into `data/fuses.json`. Only boxes listed in its `BOXES` table are imported, because each one needs a layout, a locator and a page offset checked by hand.
 
 ## Code
 - `src/lib/fusebox.ts` draws the boxes as SVG at build time.

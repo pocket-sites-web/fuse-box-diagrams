@@ -1,9 +1,9 @@
 // Interaction for the year page: box tabs, tap-to-select, circuit search, synced table and detail panel.
 interface F {
-  slot: string; amps: number | null; type: string; circuit: string; tags?: string;
+  slot: string; amps: number | null; type: string; circuit: string; tags?: string; only?: string;
   typeName: string; colour: string | null; colourName: string | null; icon: string; shop: string; shopLabel: string;
 }
-interface B { key: string; short: string; name: string; page: string; fuses: F[] }
+interface B { key: string; short: string; name: string; page: string; note: string; fuses: F[] }
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
@@ -16,32 +16,56 @@ export function initFuseBox(root: HTMLElement) {
   const $$ = <T extends Element = HTMLElement>(s: string) => [...root.querySelectorAll<T>(s)];
   const input = $<HTMLInputElement>('#q');
 
+  // Manuals word the same thing many ways ("headlight", "H-LP", "CIG"), so each search maps to a set of terms.
+  const SYNONYMS: Record<string, string[]> = {
+    radio: ['radio', 'audio', 'stereo', 'amp'],
+    'power point': ['power point', 'power outlet', 'p/outlet', 'cig', 'lighter', 'accessory socket', 'power socket'],
+    'cigarette lighter': ['cig', 'lighter', 'power outlet', 'power point', 'p/outlet'],
+    'fuel pump': ['fuel pump', 'f/pump', 'fuel'],
+    'brake lights': ['brake light', 'stop light', 'stop lamp', 'brake lamp', 'stop'],
+    horn: ['horn'],
+    wipers: ['wiper', 'washer'],
+    'a/c': ['a/c', 'air condition', 'a/con', 'climate', 'blower', 'heater', 'htr'],
+    headlamp: ['headlight', 'headlamp', 'h-lp', 'h/lamp', 'low beam', 'high beam'],
+  };
   const matches = (key: string) => {
     const q = state.q.trim().toLowerCase();
     if (!q) return [];
-    const words = q.split(/\s+/);
+    const test = SYNONYMS[q]
+      ? (hay: string) => SYNONYMS[q].some((t) => hay.includes(t))
+      : (hay: string) => q.split(/\s+/).every((w) => hay.includes(w));
     return byKey.get(key)!.fuses
-      .filter((f) => f.circuit !== 'Not used' && words.every((w) => `${f.circuit} ${f.tags ?? ''}`.toLowerCase().includes(w)))
-      .map((f) => f.slot);
+      .filter((f) => f.circuit !== 'Not used' && f.circuit !== '-' && test(`${f.circuit} ${f.tags ?? ''}`.toLowerCase()))
+      .map((f) => f.slot)
+      .filter((v, i, arr) => arr.indexOf(v) === i);
   };
 
   function panel() {
     const b = byKey.get(state.box)!, id = state.sel[b.key];
-    const list = b.fuses, idx = list.findIndex((f) => f.slot === id), f = list[idx];
+    const slots = [...new Set(b.fuses.map((f) => f.slot))], idx = slots.indexOf(id);
+    const rows = b.fuses.filter((f) => f.slot === id), f = rows[0];
     const relay = f.type === 'relay';
+    const amps = rows.map((r) => r.amps).filter((a) => a != null);
+    const rating = amps.length ? [...new Set(amps)].map((a) => `${a} amps`).join(' or ') : '–';
+    const versions = rows.length > 1
+      ? `<p class="tip">${rows.map((r) => `<b>${r.amps}A</b> on ${esc(r.only ?? 'other versions')}`).join('<br>')}</p>` : '';
+    const replace = rows.length > 1
+      ? 'the rating for your version'
+      : `a ${f.amps}A ${f.typeName.toLowerCase()}${f.colourName ? ` (${f.colourName.toLowerCase()})` : ''}`;
     const tip = relay
       ? '<b>Testing a relay:</b> swap it with an identical relay from the same box. If the fault moves, the relay is bad.'
-      : f.amps ? `<b>Replace with:</b> a ${f.amps}A ${f.typeName.toLowerCase()} (${(f.colourName ?? '').toLowerCase()}). Never fit a higher rating.` : '<b>Empty slot.</b> Nothing on this vehicle uses it.';
-    const prev = list[(idx - 1 + list.length) % list.length].slot, next = list[(idx + 1) % list.length].slot;
+      : f.amps ? `<b>Replace with:</b> ${replace}. Never fit a higher rating.${b.note ? ` ${esc(b.note)}` : ''}` : '<b>Empty slot.</b> Nothing on this vehicle uses it.';
+    const prev = slots[(idx - 1 + slots.length) % slots.length], next = slots[(idx + 1) % slots.length];
     $('#panel').innerHTML = `
       <div class="head">${f.icon}<div><div class="slotno">${esc(b.short)} · ${relay ? 'Relay' : 'Fuse'} ${esc(f.slot)}</div><h2>${esc(f.circuit)}</h2></div></div>
       <dl>
-        <dt>Rating</dt><dd>${f.amps ? `${f.amps} amps` : '–'}</dd>
+        <dt>Rating</dt><dd>${rating}</dd>
         <dt>Type</dt><dd>${esc(f.typeName)}</dd>
-        ${f.colour ? `<dt>Colour</dt><dd><span class="swatch" style="background:${f.colour}"></span>${esc(f.colourName ?? '')}</dd>` : ''}
+        ${f.colour && rows.length === 1 ? `<dt>Colour</dt><dd><span class="swatch" style="background:${f.colour}"></span>${esc(f.colourName ?? '')}</dd>` : ''}
         <dt>Box</dt><dd>${esc(b.name)}</dd>
         ${b.page ? `<dt>Manual</dt><dd>p. ${esc(b.page)}</dd>` : ''}
       </dl>
+      ${versions}
       <p class="tip">${tip}</p>
       ${f.amps || relay ? `<a class="buy" href="${f.shop}" target="_blank" rel="nofollow sponsored noopener">Shop ${esc(f.shopLabel)}s on Amazon <small>(affiliate)</small></a>` : ''}
       <div class="nav"><button type="button" data-go="${esc(prev)}">← ${esc(prev)}</button><button type="button" data-go="${esc(next)}">${esc(next)} →</button></div>`;

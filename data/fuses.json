@@ -1,490 +1,611 @@
 [
  {
-  "make": "Ford",
-  "model": "F-150",
-  "year": 2006,
-  "source_name": "2006 Ford F-150 Owner's Guide",
-  "sample": true,
-  "box_key": "interior",
-  "box": "Passenger compartment fuse panel",
-  "short": "Interior panel",
-  "location": "Driver's footwell, left of the brake pedal, behind a pull-off cover.",
-  "locator": "driver-footwell",
-  "layout": "ford-f150-2004-interior",
-  "page": "214",
+  "make": "Toyota",
+  "model": "Camry",
+  "year": 2013,
+  "box_key": "engine",
+  "box": "Engine compartment fuse block",
+  "short": "Engine bay",
+  "location": "Under the hood, in the black box next to the battery; unclip the lid.",
+  "locator": "engine-driver",
+  "layout": "toyota-camry-2012-engine",
+  "source_name": "2013 Toyota Camry Owner's Manual",
+  "page": "399",
+  "type_note": "Fuse sizes are read from the manual's drawing. Check the old fuse before buying.",
   "fuses": [
    {
     "slot": "1",
-    "amps": 30,
+    "amps": 5,
     "type": "mini",
-    "circuit": "Moonroof"
+    "circuit": "METER-IG2: Gauge and meters",
+    "tags": "dash"
    },
    {
     "slot": "2",
-    "amps": 15,
-    "type": "mini",
-    "circuit": "Brake lamp switch, brake lamps",
-    "tags": "brake lights stop"
+    "amps": 50,
+    "type": "cartridge",
+    "circuit": "FAN: Electric cooling fans",
+    "tags": "climate",
+    "only": "3.5 L V6 (2GR-FE) engine"
    },
    {
     "slot": "3",
-    "amps": 15,
-    "type": "mini",
-    "circuit": "Upfitter relay"
+    "amps": 30,
+    "type": "cartridge",
+    "circuit": "H-LP CLN",
+    "tags": "lights"
    },
    {
     "slot": "4",
-    "amps": 30,
-    "type": "mini",
-    "circuit": "Rear power window",
-    "tags": "windows"
+    "amps": 50,
+    "type": "cartridge",
+    "circuit": "HTR: Air conditioning system",
+    "tags": "climate"
    },
    {
     "slot": "5",
-    "amps": 10,
-    "type": "mini",
-    "circuit": "Instrument cluster, 4x4 module",
-    "tags": "4wd gauges dash"
+    "amps": 120,
+    "type": "cartridge",
+    "circuit": "ALT: Charging system",
+    "tags": "engine"
    },
    {
     "slot": "6",
-    "amps": 20,
-    "type": "mini",
-    "circuit": "Turn signals, hazard lamps",
-    "tags": "indicators blinker"
+    "amps": 30,
+    "type": "cartridge",
+    "circuit": "ABS NO.2: Vehicle stability control system",
+    "tags": "brakes"
    },
    {
     "slot": "7",
-    "amps": 10,
-    "type": "mini",
-    "circuit": "Left low-beam headlamp",
-    "tags": "headlights headlamp"
+    "amps": 30,
+    "type": "cartridge",
+    "circuit": "ST/AM2: Starter system, ECU-IG2 NO.1, A/B, ECU-IG2 NO.2",
+    "tags": "engine"
    },
    {
     "slot": "8",
-    "amps": 10,
-    "type": "mini",
-    "circuit": "Right low-beam headlamp",
-    "tags": "headlights headlamp"
+    "amps": 30,
+    "type": "cartridge",
+    "circuit": "H-LP-MAIN: H-LP LH-LO, H-LP RH-LO, MNL H-LP LVL, headlights (low beam)",
+    "tags": "lights"
    },
    {
     "slot": "9",
-    "amps": 15,
-    "type": "mini",
-    "circuit": "Interior and puddle lamps",
-    "tags": "dome light courtesy"
+    "amps": 50,
+    "type": "cartridge",
+    "circuit": "ABS NO.1: Vehicle stability control system",
+    "tags": "brakes"
    },
    {
     "slot": "10",
-    "amps": 15,
-    "type": "mini",
-    "circuit": "Switch backlighting",
-    "tags": "illumination dash lights"
+    "amps": 80,
+    "type": "cartridge",
+    "circuit": "EPS: Electric power steering",
+    "tags": "steering"
    },
    {
     "slot": "11",
-    "amps": 10,
+    "amps": 7.5,
     "type": "mini",
-    "circuit": "Transfer case, 4x4 switch",
-    "tags": "4wd 4x4 four wheel drive"
+    "circuit": "S-HORN: S-HORN",
+    "tags": "horn"
    },
    {
     "slot": "12",
-    "amps": 7.5,
+    "amps": 10,
     "type": "mini",
-    "circuit": "Power mirrors",
-    "tags": "mirror"
+    "circuit": "HORN: Horns",
+    "tags": "horn"
    },
    {
     "slot": "13",
-    "amps": 5,
+    "amps": 15,
     "type": "mini",
-    "circuit": "Instrument cluster memory",
-    "tags": "gauges dash"
+    "circuit": "EFI NO.2: Multiport fuel injection system/ sequential multiport fuel injection system, electronic controlled transmission",
+    "tags": "engine transmission"
+   },
+   {
+    "slot": "14",
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "EFI NO.3: Multiport fuel injection system/ sequential multiport fuel injection system",
+    "tags": "engine",
+    "only": "2.5 L 4-cylinder (2AR-FE, 2AR-FBE) engine"
    },
    {
     "slot": "14",
     "amps": 10,
     "type": "mini",
-    "circuit": "Radio, audio unit",
-    "tags": "stereo sound speakers"
+    "circuit": "EFI NO.3: Multiport fuel injection system/ sequential multiport fuel injection system",
+    "tags": "engine",
+    "only": "3.5 L V6 (2GR-FE) engine"
    },
    {
     "slot": "15",
-    "amps": 10,
+    "amps": 7.5,
     "type": "mini",
-    "circuit": "Climate control head",
-    "tags": "a/c ac air conditioning heater"
+    "circuit": "INJ: Multiport fuel injection system/ sequential multiport fuel injection system",
+    "tags": "engine"
    },
    {
     "slot": "16",
-    "amps": 15,
+    "amps": 7.5,
     "type": "mini",
-    "circuit": "Trailer tow park lamps",
-    "tags": "trailer towing"
+    "circuit": "ECU-IG2 NO.3: Multiport fuel injection system/ sequential multiport fuel injection system, steering lock system, electronic controlled transmission",
+    "tags": "engine transmission steering"
    },
    {
     "slot": "17",
-    "amps": 20,
+    "amps": 15,
     "type": "mini",
-    "circuit": "Power door locks",
-    "tags": "locks"
+    "circuit": "IGN: Starter system",
+    "tags": "engine"
    },
    {
     "slot": "18",
     "amps": 20,
     "type": "mini",
-    "circuit": "Heated seats",
-    "tags": "seat"
+    "circuit": "D/L-AM2",
+    "tags": "windows locks"
    },
    {
     "slot": "19",
     "amps": 25,
     "type": "mini",
-    "circuit": "Power seats",
-    "tags": "seat"
+    "circuit": "IG2-MAIN: IGN, INJ, METER-IG2, ECU-IG2 NO.3, A/B, ECU-IG2 NO.2, ECUIG2 NO.1",
+    "tags": "engine dash"
    },
    {
     "slot": "20",
-    "amps": 15,
+    "amps": 7.5,
     "type": "mini",
-    "circuit": "Diagnostic port (OBD-II)",
-    "tags": "obd scanner"
+    "circuit": "ALT-S: Charging system",
+    "tags": "engine"
    },
    {
     "slot": "21",
-    "amps": 15,
+    "amps": 5,
     "type": "mini",
-    "circuit": "Fog lamps",
-    "tags": "fog lights"
+    "circuit": "MAYDAY: MAYDAY",
+    "tags": ""
    },
    {
     "slot": "22",
     "amps": 15,
     "type": "mini",
-    "circuit": "Park lamps",
-    "tags": "parking lights"
+    "circuit": "TURN&HAZ: Turn signal lights, emergency flashers, gauge and meters",
+    "tags": "lights dash"
    },
    {
     "slot": "23",
-    "amps": 15,
+    "amps": 10,
     "type": "mini",
-    "circuit": "High-beam headlamps",
-    "tags": "headlights headlamp brights"
+    "circuit": "STRG LOCK: Steering lock system",
+    "tags": "steering"
    },
    {
     "slot": "24",
-    "amps": 20,
+    "amps": 15,
     "type": "mini",
-    "circuit": "Front power point (cigar lighter)",
-    "tags": "cigarette lighter power outlet 12v charger socket"
+    "circuit": "AMP: Audio system",
+    "tags": "audio"
    },
    {
     "slot": "25",
-    "amps": 10,
+    "amps": 15,
     "type": "mini",
-    "circuit": "Reverse lamps",
-    "tags": "back up lights backup"
+    "circuit": "H-LP LH-LO: Left-hand headlight (low beam), manual headlight leveling system",
+    "tags": "lights",
+    "only": "Vehicles with halogen headlight"
+   },
+   {
+    "slot": "25",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "H-LP LH-LO: Left-hand headlight (low beam), manual headlight leveling system",
+    "tags": "lights",
+    "only": "Vehicles with discharge headlight"
    },
    {
     "slot": "26",
-    "amps": 10,
+    "amps": 15,
     "type": "mini",
-    "circuit": "Airbag control module",
-    "tags": "airbag restraints srs"
+    "circuit": "H-LP RH-LO: Right-hand headlight (low beam)",
+    "tags": "lights",
+    "only": "Vehicles with halogen headlight"
+   },
+   {
+    "slot": "26",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "H-LP RH-LO: Right-hand headlight (low beam)",
+    "tags": "lights",
+    "only": "Vehicles with discharge headlight"
    },
    {
     "slot": "27",
-    "amps": 20,
+    "amps": 7.5,
     "type": "mini",
-    "circuit": "Ignition switch feed",
-    "tags": "start ignition"
+    "circuit": "MNL H-LP LVL: Manual headlight leveling system",
+    "tags": "lights",
+    "only": "Vehicles with discharge headlight"
    },
    {
     "slot": "28",
-    "amps": 5,
+    "amps": 30,
     "type": "mini",
-    "circuit": "Radio start signal",
-    "tags": "stereo audio"
+    "circuit": "EFI-MAIN NO.1: Multiport fuel injection system/ sequential multiport fuel injection system, EFI NO.2, EFI NO.3, A/F sensor",
+    "tags": "engine"
    },
    {
     "slot": "29",
     "amps": 5,
     "type": "mini",
-    "circuit": "Cluster (run/start)",
-    "tags": "gauges dash"
+    "circuit": "SMART",
+    "tags": ""
    },
    {
     "slot": "30",
-    "amps": 5,
+    "amps": 10,
     "type": "mini",
-    "circuit": "Overdrive cancel switch",
-    "tags": "transmission"
+    "circuit": "ETCS: Electronic throttle control system",
+    "tags": "engine"
    },
    {
     "slot": "31",
-    "amps": 10,
+    "amps": 20,
     "type": "mini",
-    "circuit": "Trailer brake controller",
-    "tags": "trailer towing brakes"
+    "circuit": "TOWING",
+    "tags": ""
    },
    {
     "slot": "32",
-    "amps": 10,
+    "amps": 7.5,
     "type": "mini",
-    "circuit": "Adjustable pedals",
-    "tags": "pedal"
+    "circuit": "EFI NO.1: Multiport fuel injection system/ sequential multiport fuel injection system, electronic controlled transmission",
+    "tags": "engine transmission"
    },
    {
     "slot": "33",
-    "amps": 10,
+    "amps": 20,
     "type": "mini",
-    "circuit": "Steering wheel controls",
-    "tags": "cruise control"
+    "circuit": "EFI-MAIN NO.2 A/F: A/F sensor",
+    "tags": "engine",
+    "only": "2.5 L 4-cylinder (2AR-FE, 2AR-FBE) engine / 3.5 L V6 (2GR-FE) engine"
    },
    {
     "slot": "34",
-    "amps": null,
+    "amps": 7.5,
     "type": "mini",
-    "circuit": "Not used"
+    "circuit": "AM2: Smart key system",
+    "tags": "keys"
    },
    {
     "slot": "35",
-    "amps": 10,
+    "amps": 20,
     "type": "mini",
-    "circuit": "Passenger airbag off lamp",
-    "tags": "airbag srs"
+    "circuit": "RADIO-B: Audio system, navigation system",
+    "tags": "audio"
    },
    {
     "slot": "36",
-    "amps": 5,
+    "amps": 7.5,
     "type": "mini",
-    "circuit": "Anti-theft (PATS) transceiver",
-    "tags": "key immobilizer wont start no start"
+    "circuit": "DOME: Clock, vanity lights, interior lights, personal lights, trunk light, door courtesy lights",
+    "tags": "lights windows locks"
    },
    {
-    "slot": "R1",
-    "amps": null,
-    "type": "relay",
-    "circuit": "Accessory delay relay",
-    "tags": "windows radio"
-   },
-   {
-    "slot": "R2",
-    "amps": null,
-    "type": "relay",
-    "circuit": "Rear window defrost relay",
-    "tags": "defroster"
+    "slot": "37",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "ECU-B NO.1: Multiplex communication system, smart key system, gauge and meters, tire pressure warning system, wireless remote control, steering sensor, front passenger occupant classification system, Blind Spot Monitor",
+    "tags": "engine airbag steering keys dash"
    }
   ]
  },
  {
-  "make": "Ford",
-  "model": "F-150",
-  "year": 2006,
-  "source_name": "2006 Ford F-150 Owner's Guide",
-  "sample": true,
-  "box_key": "hood",
-  "box": "Power distribution box",
-  "short": "Under hood",
-  "location": "Engine bay, driver's side, next to the battery. Unclip the black lid.",
+  "make": "Toyota",
+  "model": "Camry",
+  "year": 2013,
+  "box_key": "engine_cover",
+  "box": "Fuse block on the back of the engine-bay cover",
+  "short": "Engine bay lid",
+  "location": "On the underside of the engine-bay fuse box lid (two spare fuses).",
   "locator": "engine-driver",
-  "layout": "ford-f150-2004-pdb",
-  "page": "217",
+  "layout": "toyota-camry-2012-engine-cover",
+  "source_name": "2013 Toyota Camry Owner's Manual",
+  "page": "399",
+  "type_note": "Fuse sizes are read from the manual's drawing. Check the old fuse before buying.",
+  "fuses": [
+   {
+    "slot": "38",
+    "amps": 25,
+    "type": "mini",
+    "circuit": "SPARE: Spare fuse",
+    "tags": "spare"
+   },
+   {
+    "slot": "39",
+    "amps": 30,
+    "type": "mini",
+    "circuit": "SPARE: Spare fuse",
+    "tags": "spare"
+   }
+  ]
+ },
+ {
+  "make": "Toyota",
+  "model": "Camry",
+  "year": 2013,
+  "box_key": "cabin",
+  "box": "Under the instrument panel fuse block",
+  "short": "Driver footwell",
+  "location": "Under the dashboard on the driver's side, behind a small cover.",
+  "locator": "dash-driver-end",
+  "layout": "toyota-camry-2012-cabin",
+  "source_name": "2013 Toyota Camry Owner's Manual",
+  "page": "403",
+  "type_note": "Fuse sizes are read from the manual's drawing. Check the old fuse before buying.",
   "fuses": [
    {
     "slot": "1",
-    "amps": 50,
-    "type": "jcase",
-    "circuit": "ABS pump motor",
-    "tags": "brakes abs"
+    "amps": 10,
+    "type": "mini",
+    "circuit": "ECU-IG1 NO.2: Shift lock control system, seat heaters, smart key system, tire pressure warning system, wireless remote control, multiplex communication system, audio system, navigation system, moon roof, auto anti-glare inside rear view mirror",
+    "tags": "audio engine transmission climate seats windows locks keys"
    },
    {
     "slot": "2",
-    "amps": 40,
-    "type": "jcase",
-    "circuit": "Blower motor",
-    "tags": "a/c ac heater fan air conditioning"
+    "amps": 10,
+    "type": "mini",
+    "circuit": "ECU-IG1 NO.1: Vehicle stability control system, electric cooling fans, steering sensor, multiport fuel injection system/ sequential multiport fuel injection system, charging system, rear window defogger, outside rear view mirror defoggers, Blind Spot Monitor",
+    "tags": "engine climate brakes windows locks steering"
    },
    {
     "slot": "3",
-    "amps": 30,
-    "type": "jcase",
-    "circuit": "Starter relay",
-    "tags": "start wont start no start crank"
+    "amps": 10,
+    "type": "mini",
+    "circuit": "PANEL: Switch illumination, air conditioning system, shift lever light, glove box light, interior lights, personal lights, audio system, navigation system",
+    "tags": "lights audio climate"
    },
    {
     "slot": "4",
-    "amps": 60,
-    "type": "jcase",
-    "circuit": "Interior fuse panel feed"
+    "amps": 15,
+    "type": "mini",
+    "circuit": "TAIL: Parking lights, side marker lights, tail lights, license plate lights, fog lights",
+    "tags": "lights"
    },
    {
     "slot": "5",
-    "amps": 30,
-    "type": "jcase",
-    "circuit": "Trailer tow battery charge",
-    "tags": "trailer towing"
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "EPS-IG1: Electric power steering",
+    "tags": "steering"
    },
    {
     "slot": "6",
-    "amps": 50,
-    "type": "jcase",
-    "circuit": "Ignition switch feed",
-    "tags": "start"
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "ECU-IG1 NO.3: Blind Spot Monitor",
+    "tags": "engine"
    },
    {
     "slot": "7",
-    "amps": 30,
-    "type": "jcase",
-    "circuit": "Power seats",
-    "tags": "seat"
+    "amps": 10,
+    "type": "mini",
+    "circuit": "S/HTR&FAN F/L: Seat heaters",
+    "tags": "climate seats"
    },
    {
     "slot": "8",
-    "amps": 30,
-    "type": "jcase",
-    "circuit": "Windshield wipers",
-    "tags": "wiper washer"
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "H-LP LVL",
+    "tags": "lights"
    },
    {
     "slot": "9",
-    "amps": 40,
-    "type": "jcase",
-    "circuit": "Trailer electric brakes",
-    "tags": "trailer towing"
+    "amps": 10,
+    "type": "mini",
+    "circuit": "WASHER: Windshield wipers and washer",
+    "tags": "wipers"
    },
    {
     "slot": "10",
-    "amps": 20,
-    "type": "jcase",
-    "circuit": "Auxiliary power point",
-    "tags": "cigarette lighter power outlet 12v charger socket"
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "A/C-IG1: Air conditioning system",
+    "tags": "climate"
    },
    {
     "slot": "11",
-    "amps": 20,
+    "amps": 25,
     "type": "mini",
-    "circuit": "Fuel pump",
-    "tags": "fuel wont start no start"
+    "circuit": "WIPER: Windshield wipers and washer",
+    "tags": "wipers"
    },
    {
     "slot": "12",
-    "amps": 15,
+    "amps": 7.5,
     "type": "mini",
-    "circuit": "Horn"
+    "circuit": "BKUP LP: Back-up lights, multiport fuel injection system/sequential multiport fuel injection system, electronic controlled transmission, audio system, navigation system",
+    "tags": "lights audio engine transmission"
    },
    {
     "slot": "13",
-    "amps": 10,
-    "type": "mini",
-    "circuit": "A/C clutch",
-    "tags": "ac air conditioning"
+    "amps": 30,
+    "type": "atm",
+    "circuit": "DOOR NO.1: Power windows",
+    "tags": "windows locks"
    },
    {
     "slot": "14",
-    "amps": 20,
+    "amps": 5,
     "type": "mini",
-    "circuit": "Engine computer (PCM)",
-    "tags": "pcm ecu ecm engine"
+    "circuit": "WIPER-S",
+    "tags": "wipers"
    },
    {
     "slot": "15",
-    "amps": 15,
+    "amps": 20,
     "type": "mini",
-    "circuit": "Trailer right stop/turn",
-    "tags": "trailer towing brake lights"
+    "circuit": "P/OUTLET RR: Power outlet",
+    "tags": "power outlet"
    },
    {
     "slot": "16",
-    "amps": 15,
+    "amps": 5,
     "type": "mini",
-    "circuit": "Trailer left stop/turn",
-    "tags": "trailer towing brake lights"
+    "circuit": "SFT LOCKACC: Shift lock control system",
+    "tags": "transmission"
    },
    {
     "slot": "17",
-    "amps": 10,
+    "amps": 20,
     "type": "mini",
-    "circuit": "PCM keep-alive power",
-    "tags": "pcm ecu engine"
+    "circuit": "DOOR R/R: Rear right-hand power windows",
+    "tags": "windows locks"
    },
    {
     "slot": "18",
-    "amps": 15,
+    "amps": 20,
     "type": "mini",
-    "circuit": "Fuel injectors, ignition coils",
-    "tags": "engine misfire"
+    "circuit": "DOOR R/L: Rear left-hand power windows",
+    "tags": "windows locks"
    },
    {
     "slot": "19",
-    "amps": 20,
+    "amps": 10,
     "type": "mini",
-    "circuit": "Rear power point",
-    "tags": "cigarette lighter power outlet 12v charger socket"
+    "circuit": "OBD: On-Board diagnosis system",
+    "tags": "dash"
    },
    {
     "slot": "20",
     "amps": 10,
     "type": "mini",
-    "circuit": "Alternator sense",
-    "tags": "charging battery light"
+    "circuit": "ECU-B NO.2: Smart key system, tire pressure warning system",
+    "tags": "engine keys"
    },
    {
     "slot": "21",
     "amps": 20,
     "type": "mini",
-    "circuit": "4x4 shift motor",
-    "tags": "4wd 4x4 four wheel drive"
+    "circuit": "DOOR NO.2: Power windows",
+    "tags": "windows locks"
    },
    {
     "slot": "22",
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "AM1: Multiport fuel injection system/ sequential multiport fuel injection system, starter system",
+    "tags": "engine"
+   },
+   {
+    "slot": "23",
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "STOP: Tail lights, multiport fuel injection system/sequential multiport fuel injection system, vehicle stability control system, anti-lock brake system, electronic controlled transmission, high mounted stoplight, smart key system, shift lock control system",
+    "tags": "lights engine transmission brakes keys"
+   },
+   {
+    "slot": "24",
+    "amps": 30,
+    "type": "atm",
+    "circuit": "P/SEAT RR",
+    "tags": "seats"
+   },
+   {
+    "slot": "25",
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "A/C-B: Air conditioning system",
+    "tags": "climate"
+   },
+   {
+    "slot": "26",
     "amps": 10,
     "type": "mini",
-    "circuit": "Back-up lamps (trailer)",
-    "tags": "reverse trailer"
+    "circuit": "S/ROOF: Moon roof",
+    "tags": "windows locks"
    },
    {
-    "slot": "R1",
-    "amps": null,
-    "type": "relay",
-    "circuit": "Starter relay",
-    "tags": "start wont start crank"
+    "slot": "27",
+    "amps": 30,
+    "type": "atm",
+    "circuit": "P/SEAT FR: Power seats",
+    "tags": "seats"
    },
    {
-    "slot": "R2",
-    "amps": null,
-    "type": "relay",
-    "circuit": "Fuel pump relay",
-    "tags": "fuel wont start"
+    "slot": "28",
+    "amps": 30,
+    "type": "atm",
+    "circuit": "PSB",
+    "tags": ""
    },
    {
-    "slot": "R3",
-    "amps": null,
-    "type": "relay",
-    "circuit": "Blower motor relay",
-    "tags": "a/c heater fan"
+    "slot": "29",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "D/L-AM1: Multiplex communication system, power door lock, trunk opener switch",
+    "tags": "windows locks"
    },
    {
-    "slot": "R4",
-    "amps": null,
-    "type": "relay",
-    "circuit": "Horn relay",
-    "tags": "horn"
+    "slot": "30",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "TI&TE",
+    "tags": ""
    },
    {
-    "slot": "R5",
-    "amps": null,
-    "type": "relay",
-    "circuit": "A/C clutch relay",
-    "tags": "ac air conditioning"
+    "slot": "31",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "A/B: Front passenger occupant classification system, SRS airbag system",
+    "tags": "airbag"
    },
    {
-    "slot": "R6",
-    "amps": null,
-    "type": "relay",
-    "circuit": "PCM power relay",
-    "tags": "engine computer"
+    "slot": "32",
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "ECU-IG2 NO.1: Multiport fuel injection system/ sequential multiport fuel injection system",
+    "tags": "engine"
+   },
+   {
+    "slot": "33",
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "ECU-IG2 NO.2: Smart key system, Blind Spot Monitor",
+    "tags": "engine keys"
+   },
+   {
+    "slot": "34",
+    "amps": 15,
+    "type": "mini",
+    "circuit": "CIG&P/ OUTLET: Power outlet",
+    "tags": "power outlet"
+   },
+   {
+    "slot": "35",
+    "amps": 7.5,
+    "type": "mini",
+    "circuit": "ECU-ACC: Clock, outside rear view mirrors, multiplex communication system, audio system, navigation system",
+    "tags": "audio engine windows locks"
+   },
+   {
+    "slot": "36",
+    "amps": 10,
+    "type": "mini",
+    "circuit": "S/HTR&FAN F/ R: Seat heaters",
+    "tags": "climate seats"
+   },
+   {
+    "slot": "37",
+    "amps": 20,
+    "type": "mini",
+    "circuit": "S/HTR RR",
+    "tags": "climate seats"
    }
   ]
  }

@@ -3,7 +3,7 @@
 import { fuseColour, type Box, type Fuse, type Layout, type PartType } from './data';
 
 const SIZE: Record<PartType, [number, number]> = {
-  micro2: [36, 58], mini: [44, 64], atm: [50, 72], maxi: [70, 80], jcase: [60, 60], relay: [80, 62],
+  micro2: [36, 58], mini: [44, 64], atm: [50, 72], maxi: [70, 80], jcase: [60, 60], cartridge: [60, 60], relay: [80, 62],
 };
 const MONO = 'IBM Plex Mono, ui-monospace, monospace';
 let uid = 0;
@@ -35,7 +35,7 @@ export function partSvg(type: PartType, x: number, y: number, amps: number | nul
   const c = fuseColour(type, amps);
   if (!c) return `<rect x="${x + 3}" y="${y + 3}" width="${w - 6}" height="${h - 6}" rx="5" fill="none" stroke="#3a4249" stroke-width="1.2" stroke-dasharray="3 3"/>`;
   const col = c[0], ink = lum(col) > 0.62 ? '#2a2200' : '#fff';
-  if (type === 'jcase') {
+  if (type === 'jcase' || type === 'cartridge') {
     return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="${col}"/>`
       + `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="#000" opacity=".12"/>`
       + `<rect x="${x + 3}" y="${y + 3}" width="${w - 6}" height="${h - 6}" rx="5" fill="${col}"/>`
@@ -64,42 +64,72 @@ export function partIcon(f: Fuse): string {
   return scope(`<svg viewBox="-6 -6 ${w + 12} ${h + 12}" width="${f.type === 'relay' ? 96 : 64}" height="${f.type === 'relay' ? 78 : 90}" aria-hidden="true">${DEFS}${partSvg(f.type, 0, 0, f.amps, f.slot)}</svg>`);
 }
 
+interface Placed { f: Fuse | null; type: PartType; cx: number; cy: number; rot: boolean }
+
+// Two layout styles: `rows` (centred rows, for simple boxes) or `slots` (positions traced from the
+// manual's drawing, in drawing pixels, scaled by sx/sy). Slots without an id are empty sockets.
+function place(box: Box, layout: Layout): Placed[] {
+  const bySlot = new Map<string, Fuse>();
+  for (const f of box.fuses) if (!bySlot.has(f.slot)) bySlot.set(f.slot, f);
+  if (layout.slots) {
+    const sx = layout.sx ?? 2.2, sy = layout.sy ?? sx;
+    return layout.slots.map((p) => {
+      const f = p.s ? bySlot.get(p.s) ?? null : null;
+      return { f, type: (f?.type ?? p.t) as PartType, cx: p.x * sx, cy: p.y * sy, rot: !!p.rot };
+    });
+  }
+  const out: Placed[] = [], gap = 12, rowGap = 26;
+  let y = 0;
+  for (const r of layout.rows ?? []) {
+    const fs = r.map((id) => bySlot.get(id) ?? ({ slot: id, amps: null, type: 'mini', circuit: 'Not used' } as Fuse));
+    const rowH = Math.max(...fs.map((f) => SIZE[f.type][1]));
+    const rowW = fs.reduce((a, f) => a + SIZE[f.type][0], 0) + gap * (fs.length - 1);
+    let x = -rowW / 2;
+    for (const f of fs) {
+      const [w, h] = SIZE[f.type];
+      out.push({ f, type: f.type, cx: x + w / 2, cy: y + rowH - h / 2, rot: false });
+      x += w + gap;
+    }
+    y += rowH + rowGap;
+  }
+  return out;
+}
+
 export function boxSvg(box: Box, layout: Layout): string {
-  const bySlot = new Map(box.fuses.map((f) => [f.slot, f]));
-  const W = 560, padTop = 58, rowGap = 26, gap = 12;
-  const rows = layout.rows.map((r) => r.map((id) => bySlot.get(id) ?? ({ slot: id, amps: null, type: 'mini', circuit: 'Not used' } as Fuse)));
-  const rowsH = rows.map((r) => Math.max(...r.map((f) => SIZE[f.type][1])));
-  const H = padTop + rowsH.reduce((a, b) => a + b + rowGap, 0) + 18;
-  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(box.box)} diagram">${DEFS}`;
+  const items = place(box, layout);
+  const ext = (p: Placed) => { const [w, h] = SIZE[p.type]; return p.rot ? [h, w] : [w, h]; };
+  const minX = Math.min(...items.map((p) => p.cx - ext(p)[0] / 2)), maxX = Math.max(...items.map((p) => p.cx + ext(p)[0] / 2));
+  const minY = Math.min(...items.map((p) => p.cy - ext(p)[1] / 2)), maxY = Math.max(...items.map((p) => p.cy + ext(p)[1] / 2 + 20));
+  const padX = 44, padTop = 58, padBottom = 30;
+  const W = Math.max(560, maxX - minX + padX * 2), H = maxY - minY + padTop + padBottom;
+  const ox = (W - (maxX - minX)) / 2 - minX, oy = padTop - minY;
+  // Wide boxes scroll sideways on phones rather than shrinking below a tappable size.
+  let s = `<svg viewBox="0 0 ${W} ${H}" style="--minw:${Math.round(W * 0.62)}px" role="img" aria-label="${esc(box.box)} diagram">${DEFS}`;
   s += `<rect x="4" y="4" width="${W - 8}" height="${H - 8}" rx="18" fill="#23292f" stroke="#363e46" stroke-width="2"/>`;
   s += `<rect x="14" y="14" width="${W - 28}" height="${H - 28}" rx="12" fill="#1a1f24"/><rect x="14" y="14" width="${W - 28}" height="${H - 28}" rx="12" fill="url(#fb-ribs)"/>`;
   for (const [sx, sy] of [[28, 28], [W - 28, 28], [28, H - 28], [W - 28, H - 28]])
     s += `<circle cx="${sx}" cy="${sy}" r="6.5" fill="#2e353c" stroke="#11151a" stroke-width="1.5"/><path d="M${sx - 3.5} ${sy}h7M${sx} ${sy - 3.5}v7" stroke="#11151a" stroke-width="1.6"/>`;
   s += `<text x="46" y="36" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="14" letter-spacing="1.6" fill="#6f7980">${esc(box.box.toUpperCase())}</text>`;
-  s += `<text x="${W - 46}" y="36" text-anchor="end" font-family="${MONO}" font-size="11" letter-spacing="1" fill="#6f7980">▲ FRONT</text>`;
   if (layout.puller) {
     const px = W - 74, py = H - 100;
     s += `<path d="M${px} ${py} h22 v12 l-5 6 v44 a6 6 0 0 1 -12 0 v-44 l-5 -6z" fill="#e9ecef" opacity=".9"/><rect x="${px + 7}" y="${py + 22}" width="8" height="34" rx="2" fill="#c9ced3"/>`
       + `<text x="${px + 11}" y="${py + 82}" text-anchor="middle" font-family="${MONO}" font-size="8.5" fill="#6f7980">PULLER</text>`;
   }
-  let y = padTop;
-  rows.forEach((row, ri) => {
-    const rowW = row.reduce((a, f) => a + SIZE[f.type][0], 0) + gap * (row.length - 1);
-    let x = (W - rowW) / 2;
-    for (const f of row) {
-      const [w, h] = SIZE[f.type];
-      const yy = y + (rowsH[ri] - h);
-      const what = f.type === 'relay' ? 'Relay' : 'Fuse';
-      s += `<g class="slot" data-slot="${esc(f.slot)}" tabindex="0" role="button" aria-label="${what} ${esc(f.slot)}: ${esc(f.circuit)}${f.amps ? `, ${f.amps} amps` : ''}">`
-        + `<rect x="${x - 4}" y="${yy - 4}" width="${w + 8}" height="${h + 8}" rx="8" fill="url(#fb-sock)" stroke="#000"/>`
-        + `<rect class="ring" x="${x - 7}" y="${yy - 7}" width="${w + 14}" height="${h + 14}" rx="10" fill="none" stroke="var(--accent)" stroke-width="2.5"/>`
-        + `<g class="part">${partSvg(f.type, x, yy, f.amps, f.slot)}</g>`
-        + (f.type === 'relay' ? '' : `<text class="num" x="${x + w / 2}" y="${yy + h + 17}" text-anchor="middle" font-family="${MONO}" font-weight="600" font-size="12" fill="#7d878f">${esc(f.slot)}</text>`)
-        + `</g>`;
-      x += w + gap;
-    }
-    y += rowsH[ri] + rowGap;
-  });
+  for (const p of items) {
+    const [w, h] = SIZE[p.type];
+    const cx = p.cx + ox, cy = p.cy + oy, x = cx - w / 2, y = cy - h / 2;
+    const turn = p.rot ? ` transform="rotate(90 ${cx} ${cy})"` : '';
+    const socket = `<rect x="${x - 4}" y="${y - 4}" width="${w + 8}" height="${h + 8}" rx="8" fill="url(#fb-sock)" stroke="#000"/>`;
+    if (!p.f) { s += `<g${turn} opacity=".7">${socket}</g>`; continue; }
+    const f = p.f, what = f.type === 'relay' ? 'Relay' : 'Fuse';
+    const below = cy + ext(p)[1] / 2 + 17;
+    s += `<g class="slot" data-slot="${esc(f.slot)}" tabindex="0" role="button" aria-label="${what} ${esc(f.slot)}: ${esc(f.circuit)}${f.amps ? `, ${f.amps} amps` : ''}">`
+      + `<g${turn}>${socket}`
+      + `<rect class="ring" x="${x - 7}" y="${y - 7}" width="${w + 14}" height="${h + 14}" rx="10" fill="none" stroke="var(--accent)" stroke-width="2.5"/>`
+      + `<g class="part">${partSvg(f.type, x, y, f.amps, f.slot)}</g></g>`
+      + (f.type === 'relay' ? '' : `<text class="num" x="${cx}" y="${below}" text-anchor="middle" font-family="${MONO}" font-weight="600" font-size="12" fill="#7d878f">${esc(f.slot)}</text>`)
+      + `</g>`;
+  }
   return scope(s + '</svg>');
 }
 

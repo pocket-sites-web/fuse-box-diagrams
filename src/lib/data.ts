@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-export type PartType = 'micro2' | 'mini' | 'atm' | 'maxi' | 'jcase' | 'relay';
+export type PartType = 'micro2' | 'mini' | 'atm' | 'maxi' | 'jcase' | 'cartridge' | 'relay';
 
 export interface Fuse {
   slot: string;
@@ -9,6 +9,7 @@ export interface Fuse {
   type: PartType;
   circuit: string;
   tags?: string;
+  only?: string; // e.g. "3.5 L V6 engine": the slot has another rating on other versions
 }
 
 // One fuse box for one vehicle year, as exported from the scraper (data/fuses.json).
@@ -26,11 +27,15 @@ export interface Box {
   source_name: string;
   page: string;
   sample?: boolean;
+  type_note?: string;
   fuses: Fuse[];
 }
 
 export interface Layout {
-  rows: string[][];
+  rows?: string[][];
+  slots?: { s?: string; x: number; y: number; t: PartType; rot?: boolean }[];
+  sx?: number;
+  sy?: number;
   puller?: boolean;
 }
 
@@ -117,6 +122,7 @@ export const TYPE_NAMES: Record<PartType, string> = {
   atm: 'Standard blade (ATO)',
   maxi: 'Maxi blade',
   jcase: 'J-case cartridge',
+  cartridge: 'Cartridge fuse',
   relay: 'Relay',
 };
 
@@ -136,10 +142,12 @@ const JCASE: Record<string, [string, string]> = {
 };
 export function fuseColour(type: PartType, amps: number | null): [string, string] | null {
   if (amps == null || type === 'relay') return null;
-  const table = type === 'jcase' ? JCASE : type === 'maxi' ? MAXI : BLADE;
+  const table = type === 'jcase' || type === 'cartridge' ? JCASE : type === 'maxi' ? MAXI : BLADE;
   return table[String(amps)] ?? ['#b9b2a0', `${amps}A`];
 }
 export const LEGENDS = { blade: BLADE, jcase: JCASE };
+
+export const isBlade = (t: PartType) => t === 'micro2' || t === 'mini' || t === 'atm' || t === 'maxi';
 
 export const sortSlots = (a: string, b: string) => {
   const ra = a.startsWith('R') ? 1 : 0, rb = b.startsWith('R') ? 1 : 0;

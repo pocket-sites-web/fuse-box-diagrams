@@ -24,7 +24,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body>
-    {PREVIEW && <div class="preview-bar">Preview build · sample data, not checked against the manuals</div>}
+    {PREVIEW && <div class="preview-bar">Preview build · hidden from search engines until launch</div>}
     <header class="site-header">
       <div class="wrap header-row">
         <a class="brand" href="/">
