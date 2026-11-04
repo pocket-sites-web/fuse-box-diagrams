@@ -3,7 +3,11 @@ import Base from '../layouts/Base.astro';
 import { getMakes, getYearPages } from '../lib/data';
 import { SITE_NAME } from '../lib/site';
 const makes = getMakes();
-const popular = getYearPages().slice(0, 12);
+// Highest-search models first (Keyword Planner, US), newest year we have for each.
+const TOP = ['Toyota Tacoma', 'Toyota Camry', 'Toyota Tundra', 'Toyota Corolla', 'Toyota RAV4', 'Toyota 4Runner', 'Toyota Highlander', 'Toyota Sienna',
+  'Lexus RX', 'Kia Sorento', 'Hyundai Santa Fe', 'Hyundai Tucson', 'Kia Telluride', 'Hyundai Elantra', 'Lexus ES', 'Toyota Prius'];
+const pages = getYearPages();
+const popular = TOP.map((n) => pages.filter((p) => `${p.make} ${p.model}` === n).sort((a, b) => b.year - a.year)[0]).filter(Boolean).slice(0, 12);
 ---
 <Base title={`${SITE_NAME}: Fuse Box Diagrams by Year, Make and Model`} description="Clickable fuse box diagrams for your exact year, make and model. Find which fuse runs the radio, lighter or fuel pump, with amps, from the owner's manual.">
   <section>
@@ -20,7 +24,7 @@ const popular = getYearPages().slice(0, 12);
   </section>
   <section>
     <h2>Popular diagrams</h2>
-    <ul class="link-grid">{popular.map((p) => <li><a href={`/${p.makeSlug}/${p.modelSlug}/${p.year}/`}>{p.year} {p.make} {p.model}<span class="sub">{p.boxes.length} fuse boxes</span></a></li>)}</ul>
+    <ul class="link-grid">{popular.map((p) => <li><a href={`/${p.makeSlug}/${p.modelSlug}/${p.year}/`}>{p.year} {p.make} {p.model}<span class="sub">{p.boxes.length} fuse {p.boxes.length === 1 ? 'box' : 'boxes'}</span></a></li>)}</ul>
   </section>
   <section>
     <h2>Makes</h2>

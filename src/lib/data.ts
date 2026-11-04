@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-export type PartType = 'micro2' | 'mini' | 'atm' | 'maxi' | 'jcase' | 'cartridge' | 'relay';
+// `fuse`: the manual gives no size or type (untraced boxes), so we draw a plain labelled tile.
+export type PartType = 'micro2' | 'mini' | 'atm' | 'maxi' | 'jcase' | 'cartridge' | 'relay' | 'fuse';
 
 export interface Fuse {
   slot: string;
@@ -23,7 +24,7 @@ export interface Box {
   short: string;
   location: string;
   locator: string;
-  layout: string;
+  layout: string; // '' = not traced yet: drawn as a numbered slot map
   source_name: string;
   page: string;
   sample?: boolean;
@@ -37,6 +38,7 @@ export interface Layout {
   sx?: number;
   sy?: number;
   puller?: boolean;
+  grid?: boolean;
 }
 
 export interface YearPage {
@@ -70,6 +72,7 @@ const read = <T>(f: string): T => JSON.parse(fs.readFileSync(path.resolve('data'
 
 let layouts: Record<string, Layout> | null = null;
 export function getLayout(id: string): Layout {
+  if (!id) return { grid: true };
   layouts ??= read<Record<string, Layout>>('layouts.json');
   const l = layouts[id];
   if (!l) throw new Error(`Missing layout ${id}`);
@@ -124,6 +127,7 @@ export const TYPE_NAMES: Record<PartType, string> = {
   jcase: 'J-case cartridge',
   cartridge: 'Cartridge fuse',
   relay: 'Relay',
+  fuse: 'Fuse (size not listed)',
 };
 
 // Industry colour codes by amp rating.
@@ -141,7 +145,7 @@ const JCASE: Record<string, [string, string]> = {
   50: ['#CC2B2B', 'Red'], 60: ['#E9C21A', 'Yellow'],
 };
 export function fuseColour(type: PartType, amps: number | null): [string, string] | null {
-  if (amps == null || type === 'relay') return null;
+  if (amps == null || type === 'relay' || type === 'fuse') return null;
   const table = type === 'jcase' || type === 'cartridge' ? JCASE : type === 'maxi' ? MAXI : BLADE;
   return table[String(amps)] ?? ['#b9b2a0', `${amps}A`];
 }
@@ -149,6 +153,8 @@ export const LEGENDS = { blade: BLADE, jcase: JCASE };
 
 export const isBlade = (t: PartType) => t === 'micro2' || t === 'mini' || t === 'atm' || t === 'maxi';
 
+// Numbered slots sort by number; named slots (Hyundai, Kia) keep the manual's order.
+export const isNumbered = (slots: string[]) => slots.every((s) => /^R?\d+[A-Z]?$/i.test(s));
 export const sortSlots = (a: string, b: string) => {
   const ra = a.startsWith('R') ? 1 : 0, rb = b.startsWith('R') ? 1 : 0;
   return ra - rb || parseFloat(a.replace(/\D+/g, '')) - parseFloat(b.replace(/\D+/g, '')) || a.localeCompare(b);

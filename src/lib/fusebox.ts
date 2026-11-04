@@ -1,10 +1,12 @@
 // Draws a fuse box as an SVG string from a layout (slot rows) and the box's fuses.
 // Server-rendered so the diagram shows without JavaScript; public/fusebox.js adds the interaction.
-import { fuseColour, type Box, type Fuse, type Layout, type PartType } from './data';
+import { fuseColour, isNumbered, sortSlots, type Box, type Fuse, type Layout, type PartType } from './data';
 
 const SIZE: Record<PartType, [number, number]> = {
-  micro2: [36, 58], mini: [44, 64], atm: [50, 72], maxi: [70, 80], jcase: [60, 60], cartridge: [60, 60], relay: [80, 62],
+  micro2: [36, 58], mini: [44, 64], atm: [50, 72], maxi: [70, 80], jcase: [60, 60], cartridge: [60, 60], relay: [80, 62], fuse: [64, 64],
 };
+// Tile width for an untyped fuse: wide enough for its slot name (Hyundai/Kia use names like "MULTI MEDIA 1").
+const tileW = (label: string) => Math.max(64, Math.min(170, label.length * 8.4 + 18));
 const MONO = 'IBM Plex Mono, ui-monospace, monospace';
 let uid = 0;
 // Gradient ids must be unique per SVG: a gradient defined inside a hidden SVG doesn't paint anywhere.
@@ -23,8 +25,17 @@ export const DEFS = `<defs>
 <pattern id="fb-ribs" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="1" height="8" fill="#fff" opacity=".025"/></pattern>
 </defs>`;
 
-export function partSvg(type: PartType, x: number, y: number, amps: number | null, label: string): string {
-  const [w, h] = SIZE[type];
+export function partSvg(type: PartType, x: number, y: number, amps: number | null, label: string, tw?: number): string {
+  const [w, h] = type === 'fuse' ? [tw ?? tileW(label), SIZE.fuse[1]] : SIZE[type];
+  if (type === 'fuse') {
+    // Label-style tile, like the printed map inside a box lid: slot name on top, rating below. No colour,
+    // because the manual doesn't say which size of fuse sits there and colour codes differ by size.
+    const name = label.length > 19 ? label.slice(0, 18) + '…' : label;
+    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="${amps ? '#d9dee2' : '#3a4249'}"/>`
+      + `<rect x="${x}" y="${y}" width="${w}" height="22" rx="7" fill="${amps ? '#b8c0c7' : '#323a41'}"/><rect x="${x}" y="${y + 15}" width="${w}" height="7" fill="${amps ? '#b8c0c7' : '#323a41'}"/>`
+      + `<text x="${x + w / 2}" y="${y + 15.5}" text-anchor="middle" font-family="${MONO}" font-weight="600" font-size="11.5" fill="${amps ? '#2a3238' : '#9aa3aa'}">${esc(name)}</text>`
+      + `<text x="${x + w / 2}" y="${y + 50}" text-anchor="middle" font-family="${MONO}" font-weight="600" font-size="20" fill="${amps ? '#1a1f24' : '#7d878f'}">${amps ? `${amps}A` : '–'}</text>`;
+  }
   if (type === 'relay') {
     const cx = x + w / 2;
     return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="url(#fb-relay)" stroke="#4b535b"/>`
@@ -60,11 +71,15 @@ export function partSvg(type: PartType, x: number, y: number, amps: number | nul
 
 /** A single part on its own, for the detail panel. */
 export function partIcon(f: Fuse): string {
+  if (f.type === 'fuse') {
+    const w = tileW(f.slot);
+    return `<svg viewBox="-4 -4 ${w + 8} 72" width="${Math.min(150, w * 1.1)}" height="78" aria-hidden="true">${partSvg('fuse', 0, 0, f.amps, f.slot, w)}</svg>`;
+  }
   const [w, h] = SIZE[f.type];
   return scope(`<svg viewBox="-6 -6 ${w + 12} ${h + 12}" width="${f.type === 'relay' ? 96 : 64}" height="${f.type === 'relay' ? 78 : 90}" aria-hidden="true">${DEFS}${partSvg(f.type, 0, 0, f.amps, f.slot)}</svg>`);
 }
 
-interface Placed { f: Fuse | null; type: PartType; cx: number; cy: number; rot: boolean }
+interface Placed { f: Fuse | null; type: PartType; cx: number; cy: number; rot: boolean; w: number; h: number }
 
 // Two layout styles: `rows` (centred rows, for simple boxes) or `slots` (positions traced from the
 // manual's drawing, in drawing pixels, scaled by sx/sy). Slots without an id are empty sockets.
@@ -75,8 +90,26 @@ function place(box: Box, layout: Layout): Placed[] {
     const sx = layout.sx ?? 2.2, sy = layout.sy ?? sx;
     return layout.slots.map((p) => {
       const f = p.s ? bySlot.get(p.s) ?? null : null;
-      return { f, type: (f?.type ?? p.t) as PartType, cx: p.x * sx, cy: p.y * sy, rot: !!p.rot };
+      const type = (f?.type ?? p.t) as PartType;
+      return { f, type, cx: p.x * sx, cy: p.y * sy, rot: !!p.rot, w: SIZE[type][0], h: SIZE[type][1] };
     });
+  }
+  if (layout.grid) {
+    // Not traced yet: a slot map in the manual's order, wrapped into rows. It makes no claim about where
+    // each fuse physically sits; the page says so above the diagram.
+    const ids = [...bySlot.keys()];
+    if (isNumbered(ids)) ids.sort(sortSlots);
+    const out: Placed[] = [], gap = 12, rowGap = 14, maxW = 860, h = SIZE.fuse[1];
+    let row: Placed[] = [], x = 0, y = 0;
+    const flush = () => { const off = -(x - gap) / 2; for (const p of row) p.cx += off; out.push(...row); row = []; x = 0; y += h + rowGap; };
+    for (const id of ids) {
+      const f = bySlot.get(id)!, w = tileW(id);
+      if (x && x + w > maxW) flush();
+      row.push({ f, type: 'fuse', cx: x + w / 2, cy: y + h / 2, rot: false, w, h });
+      x += w + gap;
+    }
+    if (row.length) flush();
+    return out;
   }
   const out: Placed[] = [], gap = 12, rowGap = 26;
   let y = 0;
@@ -87,7 +120,7 @@ function place(box: Box, layout: Layout): Placed[] {
     let x = -rowW / 2;
     for (const f of fs) {
       const [w, h] = SIZE[f.type];
-      out.push({ f, type: f.type, cx: x + w / 2, cy: y + rowH - h / 2, rot: false });
+      out.push({ f, type: f.type, cx: x + w / 2, cy: y + rowH - h / 2, rot: false, w, h });
       x += w + gap;
     }
     y += rowH + rowGap;
@@ -97,9 +130,9 @@ function place(box: Box, layout: Layout): Placed[] {
 
 export function boxSvg(box: Box, layout: Layout): string {
   const items = place(box, layout);
-  const ext = (p: Placed) => { const [w, h] = SIZE[p.type]; return p.rot ? [h, w] : [w, h]; };
+  const ext = (p: Placed) => (p.rot ? [p.h, p.w] : [p.w, p.h]);
   const minX = Math.min(...items.map((p) => p.cx - ext(p)[0] / 2)), maxX = Math.max(...items.map((p) => p.cx + ext(p)[0] / 2));
-  const minY = Math.min(...items.map((p) => p.cy - ext(p)[1] / 2)), maxY = Math.max(...items.map((p) => p.cy + ext(p)[1] / 2 + 20));
+  const minY = Math.min(...items.map((p) => p.cy - ext(p)[1] / 2)), maxY = Math.max(...items.map((p) => p.cy + ext(p)[1] / 2 + (layout.grid ? 0 : 20)));
   const padX = 44, padTop = 58, padBottom = 30;
   const W = Math.max(560, maxX - minX + padX * 2), H = maxY - minY + padTop + padBottom;
   const ox = (W - (maxX - minX)) / 2 - minX, oy = padTop - minY;
@@ -109,14 +142,14 @@ export function boxSvg(box: Box, layout: Layout): string {
   s += `<rect x="14" y="14" width="${W - 28}" height="${H - 28}" rx="12" fill="#1a1f24"/><rect x="14" y="14" width="${W - 28}" height="${H - 28}" rx="12" fill="url(#fb-ribs)"/>`;
   for (const [sx, sy] of [[28, 28], [W - 28, 28], [28, H - 28], [W - 28, H - 28]])
     s += `<circle cx="${sx}" cy="${sy}" r="6.5" fill="#2e353c" stroke="#11151a" stroke-width="1.5"/><path d="M${sx - 3.5} ${sy}h7M${sx} ${sy - 3.5}v7" stroke="#11151a" stroke-width="1.6"/>`;
-  s += `<text x="46" y="36" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="14" letter-spacing="1.6" fill="#6f7980">${esc(box.box.toUpperCase())}</text>`;
+  s += `<text x="46" y="36" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="14" letter-spacing="1.6" fill="#6f7980">${esc(box.box.toUpperCase())}${layout.grid ? ' · SLOT MAP, NOT TO SCALE' : ''}</text>`;
   if (layout.puller) {
     const px = W - 74, py = H - 100;
     s += `<path d="M${px} ${py} h22 v12 l-5 6 v44 a6 6 0 0 1 -12 0 v-44 l-5 -6z" fill="#e9ecef" opacity=".9"/><rect x="${px + 7}" y="${py + 22}" width="8" height="34" rx="2" fill="#c9ced3"/>`
       + `<text x="${px + 11}" y="${py + 82}" text-anchor="middle" font-family="${MONO}" font-size="8.5" fill="#6f7980">PULLER</text>`;
   }
   for (const p of items) {
-    const [w, h] = SIZE[p.type];
+    const { w, h } = p;
     const cx = p.cx + ox, cy = p.cy + oy, x = cx - w / 2, y = cy - h / 2;
     const turn = p.rot ? ` transform="rotate(90 ${cx} ${cy})"` : '';
     const socket = `<rect x="${x - 4}" y="${y - 4}" width="${w + 8}" height="${h + 8}" rx="8" fill="url(#fb-sock)" stroke="#000"/>`;
@@ -126,8 +159,8 @@ export function boxSvg(box: Box, layout: Layout): string {
     s += `<g class="slot" data-slot="${esc(f.slot)}" tabindex="0" role="button" aria-label="${what} ${esc(f.slot)}: ${esc(f.circuit)}${f.amps ? `, ${f.amps} amps` : ''}">`
       + `<g${turn}>${socket}`
       + `<rect class="ring" x="${x - 7}" y="${y - 7}" width="${w + 14}" height="${h + 14}" rx="10" fill="none" stroke="var(--accent)" stroke-width="2.5"/>`
-      + `<g class="part">${partSvg(f.type, x, y, f.amps, f.slot)}</g></g>`
-      + (f.type === 'relay' ? '' : `<text class="num" x="${cx}" y="${below}" text-anchor="middle" font-family="${MONO}" font-weight="600" font-size="12" fill="#7d878f">${esc(f.slot)}</text>`)
+      + `<g class="part">${partSvg(f.type, x, y, f.amps, f.slot, w)}</g></g>`
+      + (f.type === 'relay' || f.type === 'fuse' ? '' : `<text class="num" x="${cx}" y="${below}" text-anchor="middle" font-family="${MONO}" font-weight="600" font-size="12" fill="#7d878f">${esc(f.slot)}</text>`)
       + `</g>`;
   }
   return scope(s + '</svg>');
@@ -136,7 +169,7 @@ export function boxSvg(box: Box, layout: Layout): string {
 // Top-view truck/car outline with a pin where the box is. Front at the top, driver on the left (US).
 const PINS: Record<string, [number, number]> = {
   'driver-footwell': [42, 112], 'passenger-footwell': [78, 112], 'engine-driver': [38, 46], 'engine-passenger': [82, 46],
-  'dash-driver-end': [28, 100], 'dash-passenger-end': [92, 100], 'glovebox': [76, 102], 'trunk': [60, 196], 'under-seat': [44, 132],
+  'dash-driver-end': [28, 100], 'dash-passenger-end': [92, 100], 'glovebox': [76, 102], 'trunk': [60, 196], 'under-seat': [44, 132], 'engine': [60, 46], 'dash': [60, 100],
 };
 export function locatorSvg(locator: string): string {
   const [px, py] = PINS[locator] ?? [60, 60];

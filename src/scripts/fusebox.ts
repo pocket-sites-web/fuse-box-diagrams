@@ -51,13 +51,14 @@ export function initFuseBox(root: HTMLElement) {
       ? `<p class="tip">${rows.map((r) => `<b>${r.amps}A</b> on ${esc(r.only ?? 'other versions')}`).join('<br>')}</p>` : '';
     const replace = rows.length > 1
       ? 'the rating for your version'
+      : f.type === 'fuse' ? `a ${f.amps}A fuse of the same size and shape as the old one`
       : `a ${f.amps}A ${f.typeName.toLowerCase()}${f.colourName ? ` (${f.colourName.toLowerCase()})` : ''}`;
     const tip = relay
       ? '<b>Testing a relay:</b> swap it with an identical relay from the same box. If the fault moves, the relay is bad.'
       : f.amps ? `<b>Replace with:</b> ${replace}. Never fit a higher rating.${b.note ? ` ${esc(b.note)}` : ''}` : '<b>Empty slot.</b> Nothing on this vehicle uses it.';
     const prev = slots[(idx - 1 + slots.length) % slots.length], next = slots[(idx + 1) % slots.length];
     $('#panel').innerHTML = `
-      <div class="head">${f.icon}<div><div class="slotno">${esc(b.short)} · ${relay ? 'Relay' : 'Fuse'} ${esc(f.slot)}</div><h2>${esc(f.circuit)}</h2></div></div>
+      <div class="head">${f.icon}<div><div class="slotno">${esc(b.short)} · ${relay ? 'Relay' : 'Fuse'} ${esc(f.slot)}</div><h2${f.circuit.length > 70 ? ' class="long"' : ''}>${esc(f.circuit)}</h2></div></div>
       <dl>
         <dt>Rating</dt><dd>${rating}</dd>
         <dt>Type</dt><dd>${esc(f.typeName)}</dd>
