@@ -5,7 +5,7 @@ Astro static site: clickable fuse box diagrams by year, make and model. Sister s
 Plan: `niche-research/fuse-box/01-site-plan.md` in the project files.
 
 ## Before launch
-In `src/lib/site.ts`: set `SITE_URL` and `SITE_NAME` for the chosen domain, then set `PREVIEW = false`. While `PREVIEW` is true every page is noindex, robots.txt blocks crawlers and a banner says the data is sample data.
+Live on fuseboxdiagrams.com (launched 2026-11-05). In `src/lib/site.ts`, setting `PREVIEW = true` hides the site from search engines again. While `PREVIEW` is true every page is noindex, robots.txt blocks crawlers and a banner says the data is sample data.
 
 ## Data
 Both files come from the vehicle-specs scraper export (first real box: 2013 Toyota Camry).
