@@ -68,7 +68,7 @@ export function initFuseBox(root: HTMLElement) {
       </dl>
       ${versions}
       <p class="tip">${tip}</p>
-      ${f.amps || relay ? `<a class="buy" href="${f.shop}" target="_blank" rel="nofollow sponsored noopener">Shop ${esc(f.shopLabel)}s on Amazon <small>(affiliate)</small></a>` : ''}
+      ${f.amps || relay ? `<a class="buy" href="${f.shop}" target="_blank" rel="nofollow sponsored noopener">Shop ${esc(f.shopLabel)}s on Amazon</a>` : ''}
       <div class="nav"><button type="button" data-go="${esc(prev)}">← ${esc(prev)}</button><button type="button" data-go="${esc(next)}">${esc(next)} →</button></div>`;
     $$('#panel [data-go]').forEach((btn) => btn.addEventListener('click', () => select(btn.dataset.go!)));
   }
