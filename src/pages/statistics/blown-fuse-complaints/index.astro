@@ -1,0 +1,82 @@
+---
+import Base from '../../../layouts/Base.astro';
+import '../../../styles/stats.css';
+import KeyStat from '../../../components/stats/KeyStat.astro';
+import Bars from '../../../components/stats/Bars.astro';
+import StateTable from '../../../components/stats/StateTable.astro';
+import Cite from '../../../components/stats/Cite.astro';
+import { complaints as C, STATS_UPDATED_LABEL, articleLd, datasetLd, faqLd, n0, CMPL_URL, CMPL_CITE } from '../../../lib/stats';
+
+const path = '/statistics/blown-fuse-complaints/';
+const title = 'Blown Fuse and Electrical Problem Complaints: NHTSA Data by Make and Model';
+const [y0, y1] = C.years;
+const byMake = C.electrical_by_make as { make: string; complaints: number; electrical: number; pct: number; fuse: number }[];
+const top = byMake[0], low = byMake[byMake.length - 1];
+const tmy = C.fuse_top_model_years as { model: string; n: number }[];
+const circuits = C.fuse_circuits as Record<string, number>;
+const meltPct = Math.round((100 * C.fuse_melt_fire_smoke) / C.fuse);
+const description = `${n0(C.electrical)} vehicle complaints to NHTSA from ${y0} to ${y1} involved the electrical system, and ${n0(C.fuse)} describe a blown or melted fuse or a fuse box problem. Which makes and models get the most.`;
+const faq = [
+  ['How common are car electrical problems?', `From ${y0} to ${y1}, ${n0(C.electrical)} of the ${n0(C.total)} vehicle complaints filed with NHTSA (${C.electrical_pct}%) involved the electrical system.`],
+  ['Which car brand has the most electrical problems?', `Relative to its total complaints, ${top.make}: ${top.pct}% of its NHTSA complaints involve the electrical system. ${low.make} has the lowest share among the makes we compared (${low.pct}%).`],
+  ['Which cars have the most blown fuse complaints?', `The ${tmy[0].model} (${tmy[0].n} complaints) and ${tmy[1].model} (${tmy[1].n}) top the list, followed by the ${tmy[2].model} (${tmy[2].n}) and ${tmy[3].model} (${tmy[3].n}).`],
+  ['Why does a fuse keep blowing?', 'A fuse that blows again straight after replacement means the circuit is drawing too much current, usually a short to ground, a failing motor or pump, or water in a connector. Never fit a higher-rated fuse: it lets the wiring overheat. Find the circuit on your fuse box diagram and have the fault traced.'],
+];
+const jsonLd = [...articleLd(path, title, description, 'Blown fuse complaints'),
+  datasetLd(path, 'NHTSA vehicle electrical system complaints by make', `Counts and shares of NHTSA owner complaints (received ${y0} to ${y1}) involving the electrical system, and complaints describing a blown fuse or fuse box problem, by vehicle make.`, ['/data/electrical-complaints-by-make.csv'], CMPL_URL, `${y0}/${y1}`), faqLd(faq)];
+const makeRows = byMake.map((x) => ({ label: x.make, cells: [{ text: `${x.pct.toFixed(1)}%` }, { text: n0(x.electrical) }, { text: n0(x.fuse) }], tail: n0(x.complaints), muted: false }));
+const circuitRows = Object.entries(circuits).sort((a, b) => b[1] - a[1]).map(([t, v]) => ({ label: t, value: v }));
+---
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <section class="st-section">
+    <p class="crumbs"><a href="/">Home</a> › <a href="/statistics/">Statistics</a> › Blown fuse complaints</p>
+    <h1>Blown fuse and electrical complaints: what NHTSA's data shows</h1>
+    <p class="updated">Updated {STATS_UPDATED_LABEL} · Original analysis of {n0(C.total)} vehicle owner complaints filed with NHTSA, {y0} to {y1}</p>
+    <p class="lede">Drivers report electrical faults to the National Highway Traffic Safety Administration more than almost any other problem. We read every vehicle complaint received from {y0} to {y1} to find which makes have the highest share of electrical complaints, which models draw the most blown fuse reports and which circuits are involved.</p>
+    <nav class="toc" aria-label="On this page"><a href="#key-findings">Key findings</a><a href="#by-make">By make</a><a href="#by-model">By model</a><a href="#circuits">Circuits</a><a href="#methodology">Methodology</a><a href="#cite">Cite</a></nav>
+  </section>
+
+  <section class="st-section" id="key-findings">
+    <h2>Key findings</h2>
+    <ul class="kstats">
+      <KeyStat id="electrical-share" value={`${C.electrical_pct}%`} source={`NHTSA complaints, ${y0} to ${y1}`}>of vehicle complaints to NHTSA involve the <b>electrical system</b>: {n0(C.electrical)} of {n0(C.total)}.</KeyStat>
+      <KeyStat id="top-make" value={`${top.pct}%`} source="NHTSA complaints">of <b>{top.make}</b> complaints involve the electrical system, the highest of any make we compared and more than four times the share for {low.make} ({low.pct}%).</KeyStat>
+      <KeyStat id="fire" value={n0(C.electrical_fire)} source="NHTSA complaints">electrical complaints report a <b>fire</b>.</KeyStat>
+      <KeyStat id="blown-fuse" value={n0(C.fuse)} source="NHTSA complaints">complaints describe a <b>blown, burnt or melted fuse</b> or a fuse box problem.</KeyStat>
+      <KeyStat id="melt-smoke" value={`${meltPct}%`} source="NHTSA complaints">of blown fuse complaints also mention <b>melting, burning, smoke or fire</b> ({n0(C.fuse_melt_fire_smoke)} complaints).</KeyStat>
+      <KeyStat id="top-model-year" value={n0(tmy[0].n)} source="NHTSA complaints">blown fuse complaints about the <b>{tmy[0].model}</b>, more than any other model year.</KeyStat>
+    </ul>
+  </section>
+
+  <section class="st-section" id="by-make">
+    <h2>Electrical complaints by make</h2>
+    <p>Brands that sell more cars get more complaints of every kind, so we compare each make's electrical complaints with its total. Makes with at least 3,000 complaints are shown. Chrysler, Dodge and Jeep (all Stellantis brands) have the highest electrical shares; Toyota and Lexus the lowest.</p>
+    <StateTable id="electrical-complaints-by-make" caption={`Share of each make's NHTSA complaints involving the electrical system, ${y0} to ${y1}`} headers={['Make', 'Electrical share', 'Electrical', 'Blown fuse']} rows={makeRows} tailHeader="All complaints" csv="/data/electrical-complaints-by-make.csv" />
+  </section>
+
+  <section class="st-section" id="by-model">
+    <h2>Models with the most blown fuse complaints</h2>
+    <p>Most complaints about the top models describe a problem in the fuse box itself rather than a single blown fuse. Of the 97 fuse complaints about the 2008 to 2010 Buick Lucerne, 94 mention the fuse box, 68 the fuel pump and 49 melting. The Ford F-150 (2010, 2013 and 2014) shows the same pattern: 32 of its 59 fuse complaints mention the fuel pump and 32 mention melting. Ford Fiesta complaints mostly describe headlights.</p>
+    <Bars id="fuse-complaints-by-model-year" caption="Model years with the most blown fuse or fuse box complaints" rows={tmy.map((x) => ({ label: x.model, value: x.n }))} format="count" valueLabel="Complaints" />
+  </section>
+
+  <section class="st-section" id="circuits">
+    <h2>Which circuits blow fuses</h2>
+    <p>Circuits and symptoms named in blown fuse complaints. A complaint can name more than one, so treat these as indicators.</p>
+    <Bars id="fuse-complaint-circuits" caption="Circuits and symptoms mentioned in blown fuse complaints" rows={circuitRows} format="count" valueLabel="Complaints" />
+    <p>Lights, the fuel pump and the instrument cluster come up most. If one of these stops working, check its fuse first: <a href="/makes/">find your car's fuse box diagram</a>.</p>
+  </section>
+
+  <section class="st-section st-faq" id="faq"><h2>Questions</h2>{faq.map(([q, a]) => (<div><h3>{q}</h3><p>{a}</p></div>))}</section>
+
+  <section class="st-section methods" id="methodology">
+    <h2>Methodology</h2>
+    <p>We downloaded NHTSA's complaint flat files and kept vehicle complaints received from {y0} to {y1}, counting each complaint once ({n0(C.total)} complaints). A complaint counts as electrical if NHTSA lists "Electrical System" among its components. A complaint counts as a blown fuse complaint if its description mentions a blown, burnt or melted fuse, a fuse that keeps blowing, or the fuse box. Circuits are found by searching the same text.</p>
+    <p>NHTSA complaints are reports from the public. They aren't verified, they depend on how many owners choose to file, and a high count doesn't by itself prove a defect. Use them to compare and spot patterns, not as failure rates.</p>
+    <h3>Sources</h3>
+    <ul class="st-small"><li><a href={CMPL_URL}>{CMPL_CITE}</a>.</li></ul>
+  </section>
+
+  <Cite title="Blown Fuse and Electrical Problem Complaints" path={path} />
+  <section class="st-section"><h2>More statistics</h2><ul class="st-links"><li><a href="/statistics/electrical-recalls/">Electrical system recalls</a></li><li><a href="/statistics/fuse-box-facts/">Fuse box facts</a></li><li><a href="/statistics/">All statistics</a></li></ul></section>
+</Base>

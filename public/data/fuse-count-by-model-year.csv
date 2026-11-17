@@ -1,0 +1,286 @@
+make,model,model_year,fuse_boxes,fuses
+Hyundai,Elantra,2021,3,78
+Hyundai,Elantra,2022,3,78
+Hyundai,Elantra,2023,3,78
+Hyundai,Elantra GT,2018,1,37
+Hyundai,Elantra GT,2019,1,37
+Hyundai,Elantra GT,2020,1,37
+Hyundai,Elantra Hybrid,2021,2,75
+Hyundai,Elantra Hybrid,2022,1,40
+Hyundai,Elantra Hybrid,2023,2,75
+Hyundai,Elantra Hybrid,2024,2,74
+Hyundai,Elantra Hybrid,2025,2,74
+Hyundai,Elantra Hybrid,2026,2,74
+Hyundai,Elantra N,2022,3,77
+Hyundai,Elantra N,2023,3,77
+Hyundai,Elantra N,2024,4,77
+Hyundai,Elantra N,2025,4,78
+Hyundai,Elantra N,2026,4,78
+Hyundai,Ioniq 5,2025,2,90
+Hyundai,Ioniq 5,2026,2,77
+Hyundai,Ioniq 5 N,2025,2,57
+Hyundai,Ioniq 5 N,2026,2,32
+Hyundai,Ioniq 6,2023,2,92
+Hyundai,Ioniq 6,2024,2,92
+Hyundai,Ioniq 6,2025,2,92
+Hyundai,Ioniq 9,2026,1,26
+Hyundai,Ioniq Electric,2017,2,65
+Hyundai,Ioniq Electric,2018,2,65
+Hyundai,Ioniq Electric,2019,2,65
+Hyundai,Ioniq Electric,2020,2,65
+Hyundai,Ioniq Electric,2021,2,65
+Hyundai,Kona,2018,1,41
+Hyundai,Kona,2019,1,41
+Hyundai,Kona,2020,1,41
+Hyundai,Kona,2021,1,41
+Hyundai,Kona,2024,3,86
+Hyundai,Kona,2025,3,86
+Hyundai,Kona,2026,3,83
+Hyundai,Kona Electric,2019,2,75
+Hyundai,Kona Electric,2020,2,75
+Hyundai,Kona Electric,2022,2,63
+Hyundai,Kona Electric,2023,2,63
+Hyundai,Kona Electric,2024,3,92
+Hyundai,Kona Electric,2025,3,80
+Hyundai,Kona Electric,2026,3,92
+Hyundai,Kona N,2022,2,43
+Hyundai,Kona N,2023,3,83
+Hyundai,Nexo Fuel Cell,2019,2,60
+Hyundai,Nexo Fuel Cell,2020,2,60
+Hyundai,Nexo Fuel Cell,2021,2,60
+Hyundai,Nexo Fuel Cell,2022,2,60
+Hyundai,Nexo Fuel Cell,2023,2,60
+Hyundai,Nexo Fuel Cell,2024,2,61
+Hyundai,Nexo Fuel Cell,2025,2,61
+Hyundai,Palisade,2021,1,36
+Hyundai,Palisade,2022,2,94
+Hyundai,Palisade,2023,2,112
+Hyundai,Palisade,2024,2,112
+Hyundai,Palisade,2025,2,113
+Hyundai,Palisade,2026,2,40
+Hyundai,Palisade Hybrid,2026,2,91
+Hyundai,Santa Cruz,2021,2,84
+Hyundai,Santa Cruz,2022,2,84
+Hyundai,Santa Cruz,2023,2,84
+Hyundai,Santa Cruz,2024,2,84
+Hyundai,Santa FE,2024,1,19
+Hyundai,Santa FE,2025,1,19
+Hyundai,Santa FE,2026,3,94
+Hyundai,Santa FE Hybrid,2025,3,105
+Hyundai,Santa FE Hybrid,2026,3,97
+Hyundai,Santa Fe,2024,1,19
+Hyundai,Santa Fe,2025,1,19
+Hyundai,Santa Fe,2026,3,94
+Hyundai,Santa Fe Hybrid,2025,3,105
+Hyundai,Santa Fe Hybrid,2026,3,97
+Hyundai,Santa Fe Plug-in Hybrid,2023,1,25
+Hyundai,Sonata,2024,3,84
+Hyundai,Sonata,2025,3,84
+Hyundai,Sonata,2026,2,45
+Hyundai,Sonata Hybrid,2024,3,84
+Hyundai,Sonata Hybrid,2025,3,84
+Hyundai,Sonata Hybrid,2026,3,84
+Hyundai,Tucson,2022,1,30
+Hyundai,Tucson,2025,3,86
+Hyundai,Tucson,2026,3,82
+Hyundai,Tucson Plug-in Hybrid,2025,2,102
+Hyundai,Tucson Plug-in Hybrid,2026,2,102
+Kia,Cadenza,2015,2,56
+Kia,Cadenza,2016,2,56
+Kia,Carnival,2022,2,97
+Kia,Carnival,2023,2,97
+Kia,Carnival,2024,2,97
+Kia,Carnival,2025,1,50
+Kia,Carnival,2026,2,125
+Kia,Carnival Hybrid,2025,1,50
+Kia,Carnival Hybrid,2026,2,131
+Kia,EV9,2025,3,130
+Kia,Forte,2017,4,71
+Kia,Forte,2022,1,33
+Kia,K4,2025,2,90
+Kia,K4,2026,2,90
+Kia,K5,2025,2,90
+Kia,K5,2026,2,88
+Kia,Niro,2020,2,87
+Kia,Niro,2021,2,89
+Kia,Niro,2022,2,89
+Kia,Niro EV,2019,2,68
+Kia,Niro EV,2020,1,14
+Kia,Niro EV,2021,1,43
+Kia,Niro EV,2022,2,79
+Kia,Optima Hybrid,2020,1,43
+Kia,Rio,2015,2,68
+Kia,Seltos,2023,2,80
+Kia,Seltos,2024,2,82
+Kia,Seltos,2025,2,82
+Kia,Seltos,2026,2,82
+Kia,Sorento,2024,2,92
+Kia,Sorento,2025,2,92
+Kia,Sorento,2026,2,92
+Kia,Sorento Hybrid,2022,1,60
+Kia,Sorento Hybrid,2023,1,60
+Kia,Sorento Hybrid,2026,2,118
+Kia,Soul EV,2022,1,38
+Kia,Stinger,2020,3,93
+Kia,Stinger,2021,3,88
+Kia,Stinger,2022,3,88
+Kia,Stinger,2023,3,88
+Kia,Telluride,2022,1,59
+Kia,Telluride,2023,1,59
+Kia,Telluride,2024,1,56
+Kia,Telluride,2025,1,56
+Lexus,CT,2011,2,77
+Lexus,CT,2012,2,77
+Lexus,CT,2013,2,78
+Lexus,ES,2010,2,70
+Lexus,ES,2011,2,70
+Lexus,ES,2012,2,70
+Lexus,ES,2013,3,94
+Lexus,ES,2015,3,94
+Lexus,ES Hybrid,2014,3,94
+Lexus,GS,2010,2,35
+Lexus,GS,2011,2,35
+Lexus,GS,2013,3,78
+Lexus,GS,2014,3,79
+Lexus,GS,2015,3,79
+Lexus,GS Hybrid,2010,3,91
+Lexus,GS Hybrid,2011,3,91
+Lexus,GS Hybrid,2013,2,82
+Lexus,GS Hybrid,2014,2,82
+Lexus,GS Hybrid,2015,2,82
+Lexus,GX,2010,2,92
+Lexus,GX,2012,2,91
+Lexus,GX,2013,2,91
+Lexus,IS,2010,4,90
+Lexus,IS,2011,4,90
+Lexus,IS,2012,4,90
+Lexus,IS,2013,4,90
+Lexus,IS C,2010,3,68
+Lexus,IS C,2011,3,68
+Lexus,IS C,2012,3,68
+Lexus,IS C,2013,3,68
+Lexus,IS C,2014,3,68
+Lexus,IS C,2015,3,68
+Lexus,IS F,2010,4,87
+Lexus,IS F,2011,4,87
+Lexus,IS F,2012,4,87
+Lexus,IS F,2013,4,87
+Lexus,IS F,2014,4,87
+Lexus,LFA,2012,2,50
+Lexus,LX,2011,3,111
+Lexus,LX,2013,3,115
+Lexus,LX,2014,4,121
+Lexus,LX,2015,4,121
+Lexus,RX,2010,2,86
+Lexus,RX,2011,2,88
+Lexus,RX,2012,2,88
+Lexus,RX,2013,1,49
+Lexus,RX,2014,2,82
+Lexus,RX,2015,2,82
+Lexus,RX Hybrid,2010,3,93
+Lexus,RX Hybrid,2011,3,93
+Lexus,RX Hybrid,2012,3,93
+Lexus,RX Hybrid,2014,3,86
+Lexus,RX Hybrid,2015,3,86
+Lexus,SC,2010,4,53
+Toyota,4Runner,2010,2,77
+Toyota,4Runner,2011,2,76
+Toyota,4Runner,2012,2,61
+Toyota,4Runner,2013,2,79
+Toyota,86,2017,2,68
+Toyota,86,2018,2,69
+Toyota,86,2019,2,69
+Toyota,86,2020,2,69
+Toyota,Avalon,2010,2,64
+Toyota,Avalon,2013,2,77
+Toyota,Avalon,2014,2,77
+Toyota,Avalon,2015,2,77
+Toyota,Camry,2010,1,33
+Toyota,Camry,2011,1,33
+Toyota,Camry,2012,2,79
+Toyota,Camry,2013,3,81
+Toyota,Camry,2014,2,79
+Toyota,Camry Hybrid,2010,2,74
+Toyota,Camry Hybrid,2011,2,74
+Toyota,Camry Hybrid,2012,3,91
+Toyota,Camry Hybrid,2013,3,91
+Toyota,Camry Hybrid,2014,3,91
+Toyota,Corolla,2010,2,65
+Toyota,Corolla,2011,2,57
+Toyota,Corolla,2012,2,64
+Toyota,Corolla,2013,2,64
+Toyota,FJ Cruiser,2010,2,49
+Toyota,FJ Cruiser,2011,2,54
+Toyota,FJ Cruiser,2012,2,54
+Toyota,FJ Cruiser,2013,2,51
+Toyota,FJ Cruiser,2014,2,51
+Toyota,Highlander,2010,1,31
+Toyota,Highlander,2011,1,30
+Toyota,Highlander,2012,1,30
+Toyota,Highlander,2013,1,30
+Toyota,Highlander Hybrid,2010,1,31
+Toyota,Highlander Hybrid,2011,1,24
+Toyota,Highlander Hybrid,2012,1,24
+Toyota,Highlander Hybrid,2013,1,24
+Toyota,Matrix,2010,2,65
+Toyota,Matrix,2011,2,64
+Toyota,Matrix,2012,2,64
+Toyota,Matrix,2013,2,64
+Toyota,Matrix,2014,2,64
+Toyota,Prius,2010,2,70
+Toyota,Prius,2011,2,71
+Toyota,Prius,2012,2,75
+Toyota,Prius,2013,2,75
+Toyota,Prius,2014,2,75
+Toyota,Prius,2015,2,75
+Toyota,Prius Plug-in Hybrid,2012,2,76
+Toyota,Prius Plug-in Hybrid,2013,2,76
+Toyota,Prius Plug-in Hybrid,2014,2,76
+Toyota,Prius Plug-in Hybrid,2015,2,76
+Toyota,Prius c,2012,1,42
+Toyota,Prius c,2013,1,42
+Toyota,Prius c,2014,1,42
+Toyota,Prius v,2012,2,73
+Toyota,Prius v,2013,2,73
+Toyota,Prius v,2014,2,73
+Toyota,RAV4,2010,1,30
+Toyota,RAV4,2011,1,30
+Toyota,RAV4,2012,1,30
+Toyota,RAV4,2013,1,40
+Toyota,RAV4,2014,1,40
+Toyota,RAV4,2015,1,40
+Toyota,Sequoia,2010,2,86
+Toyota,Sequoia,2011,2,77
+Toyota,Sequoia,2012,2,88
+Toyota,Sequoia,2013,2,80
+Toyota,Sequoia,2014,2,80
+Toyota,Sequoia,2015,2,80
+Toyota,Sequoia,2016,2,80
+Toyota,Sequoia,2017,2,80
+Toyota,Sienna,2010,2,68
+Toyota,Sienna,2011,2,85
+Toyota,Sienna,2012,2,86
+Toyota,Sienna,2013,2,86
+Toyota,Sienna,2014,2,83
+Toyota,Tacoma,2010,2,52
+Toyota,Tacoma,2011,2,52
+Toyota,Tacoma,2012,2,53
+Toyota,Tacoma,2014,2,55
+Toyota,Tacoma,2015,2,55
+Toyota,Tundra,2010,2,75
+Toyota,Tundra,2011,2,75
+Toyota,Tundra,2012,2,75
+Toyota,Tundra,2013,2,75
+Toyota,Venza,2012,2,73
+Toyota,Venza,2013,2,72
+Toyota,Venza,2014,2,72
+Toyota,Venza,2015,2,72
+Toyota,Venza,2016,2,72
+Toyota,Yaris Hatchback,2010,2,48
+Toyota,Yaris Hatchback,2011,2,48
+Toyota,Yaris Hatchback,2012,2,41
+Toyota,Yaris Hatchback,2013,2,41
+Toyota,Yaris Hatchback,2014,2,42
+Toyota,Yaris Sedan,2010,2,48
+Toyota,Yaris Sedan,2011,2,48
+Toyota,Yaris Sedan,2012,2,48

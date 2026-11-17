@@ -1,0 +1,96 @@
+---
+import Base from '../../../layouts/Base.astro';
+import '../../../styles/stats.css';
+import KeyStat from '../../../components/stats/KeyStat.astro';
+import Bars from '../../../components/stats/Bars.astro';
+import StateTable from '../../../components/stats/StateTable.astro';
+import Cite from '../../../components/stats/Cite.astro';
+import { recalls as R, STATS_UPDATED_LABEL, articleLd, datasetLd, faqLd, n0 } from '../../../lib/stats';
+
+const RCL_URL = 'https://www.nhtsa.gov/nhtsa-datasets-and-apis';
+const RCL_CITE = 'National Highway Traffic Safety Administration, recalls flat file (FLAT_RCL_POST_2010)';
+const path = '/statistics/electrical-recalls/';
+const title = 'Car Electrical System Recalls: NHTSA Statistics 2010 to 2025';
+const [y0, y1] = R.years;
+const m = (v: number) => `${(v / 1e6).toFixed(1)} million`;
+const byYear = R.by_year as Record<string, { campaigns: number; electrical: number; electrical_vehicles: number }>;
+const share = (y: string) => (100 * byYear[y].electrical) / byYear[y].campaigns;
+const growth = Math.round((100 * (R.electrical_2021_2025 - R.electrical_2010_2014)) / R.electrical_2010_2014);
+const themes = R.electrical_themes as Record<string, number>;
+const comps = R.by_component as { component: string; campaigns: number; vehicles: number }[];
+const rank = comps.findIndex((c) => c.component === 'Electrical System') + 1;
+const mfrs = R.electrical_by_mfr as { mfr: string; campaigns: number; vehicles: number }[];
+const description = `${n0(R.electrical)} US vehicle recalls from ${y0} to ${y1} involved the electrical system, covering ${m(R.electrical_vehicles)} vehicles. ${n0(R.electrical_fire)} carried a fire risk. Trends, manufacturers and causes from NHTSA's recall data.`;
+const faq = [
+  ['How many car recalls are electrical?', `Of the ${n0(R.campaigns)} vehicle recall campaigns NHTSA logged from ${y0} to ${y1}, ${n0(R.electrical)} (${R.electrical_pct}%) involved the electrical system, covering ${m(R.electrical_vehicles)} vehicles. Only general "equipment" recalls were more common.`],
+  ['Are electrical recalls increasing?', `Yes. There were ${n0(R.electrical_2021_2025)} electrical recall campaigns in 2021 to 2025, against ${n0(R.electrical_2010_2014)} in 2010 to 2014, a rise of ${growth}%. Electrical recalls went from ${share('2010').toFixed(1)}% of all vehicle recalls in 2010 to ${share('2024').toFixed(1)}% in 2024.`],
+  ['How many electrical recalls involve a fire risk?', `${n0(R.electrical_fire)} electrical recall campaigns mention fire in the defect or its consequence, covering ${m(R.electrical_fire_vehicles)} vehicles. ${R.park_outside_electrical} electrical recalls told owners to park outside, away from buildings, until the repair was done.`],
+  ['How do I check if my car has an electrical recall?', 'Enter your 17-character VIN at nhtsa.gov/recalls. Recall repairs are free at a franchised dealer, however old the vehicle is.'],
+];
+const jsonLd = [...articleLd(path, title, description, 'Electrical recalls'),
+  datasetLd(path, 'US vehicle electrical system recalls by year', `Counts of NHTSA vehicle recall campaigns involving the electrical system, by year the recall was filed, ${y0} to ${y1}, with vehicles potentially affected.`, ['/data/electrical-recalls-by-year.csv'], RCL_URL, `${y0}/${y1}`), faqLd(faq)];
+const yearRows = Object.entries(byYear).map(([y, v]) => ({ label: y, value: v.electrical, extra: `${share(y).toFixed(1)}%` }));
+const compRows = comps.map((c) => ({ label: c.component, value: c.campaigns, extra: m(c.vehicles) }));
+const themeRows = Object.entries(themes).sort((a, b) => b[1] - a[1]).map(([t, v]) => ({ label: t, value: v }));
+const mfrRows = mfrs.map((x) => ({ label: x.mfr, cells: [{ text: n0(x.campaigns) }], tail: n0(x.vehicles), muted: false }));
+---
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <section class="st-section">
+    <p class="crumbs"><a href="/">Home</a> › <a href="/statistics/">Statistics</a> › Electrical recalls</p>
+    <h1>Car electrical system recalls: {y0} to {y1} statistics</h1>
+    <p class="updated">Updated {STATS_UPDATED_LABEL} · Original analysis of {n0(R.campaigns)} NHTSA vehicle recall campaigns</p>
+    <p class="lede">Wiring, fuses, relays, batteries and control modules are behind a growing share of US vehicle recalls. We went through every vehicle recall campaign filed with the National Highway Traffic Safety Administration from {y0} to {y1} to count electrical recalls, how many vehicles they cover, how many carry a fire risk and which manufacturers file the most.</p>
+    <nav class="toc" aria-label="On this page"><a href="#key-findings">Key findings</a><a href="#by-year">By year</a><a href="#by-component">Compared with other systems</a><a href="#causes">What goes wrong</a><a href="#by-manufacturer">By manufacturer</a><a href="#methodology">Methodology</a><a href="#cite">Cite</a></nav>
+  </section>
+
+  <section class="st-section" id="key-findings">
+    <h2>Key findings</h2>
+    <ul class="kstats">
+      <KeyStat id="total" value={n0(R.electrical)} source={`NHTSA recalls, ${y0} to ${y1}`}><b>electrical system recalls</b> were filed in the US from {y0} to {y1}, {R.electrical_pct}% of all vehicle recall campaigns, covering <b>{m(R.electrical_vehicles)}</b> vehicles.</KeyStat>
+      <KeyStat id="growth" value={`+${growth}%`} source="NHTSA recalls">rise in electrical recalls: <b>{n0(R.electrical_2021_2025)}</b> campaigns in 2021 to 2025, up from {n0(R.electrical_2010_2014)} in 2010 to 2014.</KeyStat>
+      <KeyStat id="share-tripled" value={`${share('2024').toFixed(1)}%`} source="NHTSA recalls">of all vehicle recalls in 2024 involved the electrical system, up from <b>{share('2010').toFixed(1)}%</b> in 2010.</KeyStat>
+      <KeyStat id="fire" value={n0(R.electrical_fire)} source="NHTSA recalls">electrical recalls warn of a <b>fire risk</b>, covering {m(R.electrical_fire_vehicles)} vehicles.</KeyStat>
+      <KeyStat id="fuse" value={n0(R.fuse)} source="NHTSA recalls">recall campaigns name a <b>fuse</b> in the defect or its consequence, covering {m(R.fuse_vehicles)} vehicles.</KeyStat>
+      <KeyStat id="park-outside" value={n0(R.park_outside_electrical)} source="NHTSA recalls">electrical recalls told owners to <b>park outside</b>, away from buildings, until repaired ({R.park_outside} park-outside recalls in all).</KeyStat>
+    </ul>
+  </section>
+
+  <section class="st-section" id="by-year">
+    <h2>Electrical recalls by year</h2>
+    <p>Counted by the year the recall was filed. The share column is electrical recalls as a percentage of all vehicle recall campaigns that year.</p>
+    <Bars id="electrical-recalls-by-year" caption={`Electrical system recall campaigns per year, ${y0} to ${y1}`} rows={yearRows} format="count" valueLabel="Campaigns" extraLabel="Share of recalls" />
+    <p class="st-small"><a href="/data/electrical-recalls-by-year.csv" download>Download the yearly data (CSV)</a></p>
+  </section>
+
+  <section class="st-section" id="by-component">
+    <h2>How electrical compares with other systems</h2>
+    <p>The electrical system was the {rank === 2 ? 'second' : `number ${rank}`} most recalled component group from {y0} to {y1}, behind only "equipment", a catch-all that covers trailers, RV fittings and accessories. Air bag recalls cover more vehicles because of the Takata recall, but there are fewer separate campaigns. A recall can list more than one component, so it can appear in more than one row.</p>
+    <Bars id="recalls-by-component" caption={`Vehicle recall campaigns by component, ${y0} to ${y1}`} rows={compRows} highlight={['Electrical System']} format="count" valueLabel="Campaigns" extraLabel="Vehicles" />
+  </section>
+
+  <section class="st-section" id="causes">
+    <h2>What goes wrong in electrical recalls</h2>
+    <p>We searched each electrical recall's defect and consequence text for common themes. A recall can mention more than one, so treat these as indicators, not exact counts.</p>
+    <Bars id="electrical-recall-themes" caption="Themes in electrical system recalls" rows={themeRows} format="count" valueLabel="Campaigns" />
+    <p>When a recall involves a fuse, the usual fix is a fuse of a different rating, an added fuse or a rerouted circuit. If a fuse keeps blowing, it's a sign of a fault, not a fuse that needs upgrading. <a href="/makes/">Find the fuse box diagram for your car</a> to see which circuit a fuse protects.</p>
+  </section>
+
+  <section class="st-section" id="by-manufacturer">
+    <h2>Manufacturers with the most electrical recalls</h2>
+    <p>NHTSA's data covers RVs, trailers and trucks as well as cars, so RV makers such as Forest River appear alongside car brands. Their recalls are often small, affecting a few hundred units each.</p>
+    <StateTable id="electrical-recalls-by-manufacturer" caption={`Electrical system recall campaigns by manufacturer, ${y0} to ${y1}`} headers={['Manufacturer', 'Campaigns']} rows={mfrRows} tailHeader="Vehicles" />
+  </section>
+
+  <section class="st-section st-faq" id="faq"><h2>Questions</h2>{faq.map(([q, a]) => (<div><h3>{q}</h3><p>{a}</p></div>))}</section>
+
+  <section class="st-section methods" id="methodology">
+    <h2>Methodology</h2>
+    <p>We downloaded NHTSA's recall flat file, kept vehicle recalls (not tire, equipment-only or child seat recalls) and grouped records by campaign number, so each recall counts once however many models it covers. Recalls are dated by the date the manufacturer filed the report. A recall counts as electrical if NHTSA lists "Electrical System" among its components. Vehicles are the manufacturer's estimate of vehicles potentially affected, counted once per campaign, so a vehicle in two recalls is counted twice. Fire, fuse and theme counts come from searching the defect and consequence text.</p>
+    <p>Recall counts depend on how often manufacturers find and report defects, so a manufacturer with many recalls isn't necessarily less reliable than one with few.</p>
+    <h3>Sources</h3>
+    <ul class="st-small"><li><a href={RCL_URL}>{RCL_CITE}</a>.</li></ul>
+  </section>
+
+  <Cite title="Car Electrical System Recalls" path={path} />
+  <section class="st-section"><h2>More statistics</h2><ul class="st-links"><li><a href="/statistics/blown-fuse-complaints/">Blown fuse and electrical complaints</a></li><li><a href="/statistics/fuse-box-facts/">Fuse box facts</a></li><li><a href="/statistics/">All statistics</a></li></ul></section>
+</Base>
