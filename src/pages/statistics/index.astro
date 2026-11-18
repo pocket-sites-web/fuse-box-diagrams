@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/stats.css';
+import { recalls, complaints, boxes, STATS_UPDATED_LABEL, SITE_URL, SITE_NAME, n0 } from '../../lib/stats';
+const pages = [
+  { href: '/statistics/electrical-recalls/', title: 'Electrical system recalls', blurb: `${n0(recalls.electrical)} US vehicle recalls from ${recalls.years[0]} to ${recalls.years[1]} involved the electrical system, and ${n0(recalls.electrical_fire)} carried a fire risk.` },
+  { href: '/statistics/blown-fuse-complaints/', title: 'Blown fuse and electrical complaints', blurb: `${complaints.electrical_pct}% of NHTSA vehicle complaints are electrical. Which makes and models get the most, and which circuits blow fuses.` },
+  { href: '/statistics/fuse-box-facts/', title: 'Fuse box facts', blurb: `The median car we cover has ${boxes.median_fuses} fuses. Fuse counts, ratings and circuits from ${boxes.model_years} owner's manuals.` },
+];
+---
+<Base title="Car Fuse and Electrical System Statistics" description="Original statistics on car fuse boxes, electrical recalls and blown fuse complaints, from our own owner's-manual data and NHTSA records." jsonLd={{ '@context': 'https://schema.org', '@type': 'CollectionPage', name: `${SITE_NAME} statistics`, url: `${SITE_URL}/statistics/` }}>
+  <section class="st-section">
+    <p class="crumbs"><a href="/">Home</a> › Statistics</p>
+    <h1>Car fuse and electrical statistics</h1>
+    <p class="updated">Updated {STATS_UPDATED_LABEL}</p>
+    <p class="lede">Original research from {SITE_NAME}: our own owner's-manual fuse data plus new analysis of federal recall and complaint records. Every figure has its own link, sources and methodology, and you're welcome to cite them with a link back.</p>
+  </section>
+  <section class="st-section"><ul class="kstats">{pages.map((p) => (<li class="kstat"><h2><a href={p.href}>{p.title}</a></h2><p class="kstat-text">{p.blurb}</p></li>))}</ul></section>
+  <section class="st-section">
+    <h2>Downloads</h2>
+    <ul class="st-links" style="grid-template-columns:1fr">
+      <li><a href="/data/electrical-recalls-by-year.csv" download>Electrical recalls by year (CSV)</a></li>
+      <li><a href="/data/electrical-complaints-by-make.csv" download>Electrical and blown fuse complaints by make (CSV)</a></li>
+      <li><a href="/data/fuse-count-by-model-year.csv" download>Fuse counts by model year (CSV)</a></li>
+    </ul>
+    <p class="st-small st-muted">Free to reuse under CC BY 4.0: please credit {SITE_NAME} with a link.</p>
+  </section>
+</Base>

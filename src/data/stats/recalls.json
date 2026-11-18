@@ -1,0 +1,237 @@
+{
+ "years": [
+  2010,
+  2025
+ ],
+ "campaigns": 13045,
+ "vehicles": 504210637,
+ "electrical": 1888,
+ "electrical_vehicles": 84085915,
+ "electrical_pct": 14.5,
+ "electrical_fire": 828,
+ "electrical_fire_vehicles": 20519305,
+ "fire_all": 2856,
+ "fuse": 184,
+ "fuse_vehicles": 4207340,
+ "park_outside": 82,
+ "park_outside_electrical": 36,
+ "do_not_drive": 189,
+ "electrical_2010_2014": 353,
+ "electrical_2021_2025": 856,
+ "by_year": {
+  "2010": {
+   "campaigns": 647,
+   "electrical": 42,
+   "electrical_vehicles": 2558952
+  },
+  "2011": {
+   "campaigns": 597,
+   "electrical": 58,
+   "electrical_vehicles": 781688
+  },
+  "2012": {
+   "campaigns": 583,
+   "electrical": 55,
+   "electrical_vehicles": 2179004
+  },
+  "2013": {
+   "campaigns": 627,
+   "electrical": 101,
+   "electrical_vehicles": 3778829
+  },
+  "2014": {
+   "campaigns": 770,
+   "electrical": 97,
+   "electrical_vehicles": 23614221
+  },
+  "2015": {
+   "campaigns": 863,
+   "electrical": 104,
+   "electrical_vehicles": 4020727
+  },
+  "2016": {
+   "campaigns": 919,
+   "electrical": 110,
+   "electrical_vehicles": 1466265
+  },
+  "2017": {
+   "campaigns": 810,
+   "electrical": 80,
+   "electrical_vehicles": 3285215
+  },
+  "2018": {
+   "campaigns": 912,
+   "electrical": 125,
+   "electrical_vehicles": 6569767
+  },
+  "2019": {
+   "campaigns": 879,
+   "electrical": 114,
+   "electrical_vehicles": 3644535
+  },
+  "2020": {
+   "campaigns": 782,
+   "electrical": 146,
+   "electrical_vehicles": 3374608
+  },
+  "2021": {
+   "campaigns": 988,
+   "electrical": 121,
+   "electrical_vehicles": 4571808
+  },
+  "2022": {
+   "campaigns": 933,
+   "electrical": 147,
+   "electrical_vehicles": 4610695
+  },
+  "2023": {
+   "campaigns": 894,
+   "electrical": 201,
+   "electrical_vehicles": 7412531
+  },
+  "2024": {
+   "campaigns": 950,
+   "electrical": 209,
+   "electrical_vehicles": 7833382
+  },
+  "2025": {
+   "campaigns": 891,
+   "electrical": 178,
+   "electrical_vehicles": 4383688
+  }
+ },
+ "by_component": [
+  {
+   "component": "Equipment",
+   "campaigns": 2333,
+   "vehicles": 13083872
+  },
+  {
+   "component": "Electrical System",
+   "campaigns": 1888,
+   "vehicles": 84085915
+  },
+  {
+   "component": "Structure",
+   "campaigns": 935,
+   "vehicles": 24903362
+  },
+  {
+   "component": "Air Bags",
+   "campaigns": 829,
+   "vehicles": 133013938
+  },
+  {
+   "component": "Power Train",
+   "campaigns": 754,
+   "vehicles": 30900356
+  },
+  {
+   "component": "Steering",
+   "campaigns": 698,
+   "vehicles": 23441525
+  },
+  {
+   "component": "Suspension",
+   "campaigns": 682,
+   "vehicles": 13471830
+  },
+  {
+   "component": "Exterior Lighting",
+   "campaigns": 660,
+   "vehicles": 25280920
+  },
+  {
+   "component": "Engine and Engine Cooling",
+   "campaigns": 576,
+   "vehicles": 19967147
+  },
+  {
+   "component": "Service Brakes, Hydraulic",
+   "campaigns": 573,
+   "vehicles": 33670145
+  },
+  {
+   "component": "Seat Belts",
+   "campaigns": 452,
+   "vehicles": 27235418
+  },
+  {
+   "component": "Visibility",
+   "campaigns": 452,
+   "vehicles": 19569064
+  }
+ ],
+ "electrical_by_mfr": [
+  {
+   "mfr": "Ford Motor Company",
+   "campaigns": 88,
+   "vehicles": 4329812
+  },
+  {
+   "mfr": "Forest River, Inc",
+   "campaigns": 87,
+   "vehicles": 84269
+  },
+  {
+   "mfr": "Mercedes-Benz USA, LLC",
+   "campaigns": 81,
+   "vehicles": 2631937
+  },
+  {
+   "mfr": "BMW of North America, LLC",
+   "campaigns": 62,
+   "vehicles": 2756303
+  },
+  {
+   "mfr": "General Motors LLC",
+   "campaigns": 41,
+   "vehicles": 19564538
+  },
+  {
+   "mfr": "Volkswagen Group of America, Inc",
+   "campaigns": 40,
+   "vehicles": 1991329
+  },
+  {
+   "mfr": "Hyundai Motor America",
+   "campaigns": 35,
+   "vehicles": 1423915
+  },
+  {
+   "mfr": "Honda (American Honda Motor Co.)",
+   "campaigns": 34,
+   "vehicles": 6070412
+  },
+  {
+   "mfr": "Chrysler (FCA US LLC)",
+   "campaigns": 33,
+   "vehicles": 7576617
+  },
+  {
+   "mfr": "Jayco, Inc",
+   "campaigns": 33,
+   "vehicles": 29721
+  },
+  {
+   "mfr": "Jaguar Land Rover North America, LLC",
+   "campaigns": 33,
+   "vehicles": 135387
+  },
+  {
+   "mfr": "Daimler Trucks North America LLC",
+   "campaigns": 32,
+   "vehicles": 162488
+  }
+ ],
+ "electrical_themes": {
+  "Fire risk": 828,
+  "Loss of drive power or stalling": 490,
+  "Lights failing": 301,
+  "Warning lights or gauges": 297,
+  "Rear camera": 29,
+  "Wiring harness": 355,
+  "Battery": 393,
+  "Short circuit": 469
+ }
+}

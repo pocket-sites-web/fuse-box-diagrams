@@ -1,0 +1,273 @@
+{
+ "years": [
+  2015,
+  2025
+ ],
+ "total": 722712,
+ "electrical": 125969,
+ "electrical_pct": 17.4,
+ "electrical_fire": 5555,
+ "fuse": 1692,
+ "fuse_melt_fire_smoke": 704,
+ "fuse_circuits": {
+  "Lights": 491,
+  "Engine stalls or won't start": 309,
+  "Instrument cluster or dash": 247,
+  "Fuel pump": 246,
+  "Wipers": 109,
+  "Radio or infotainment": 98,
+  "A/C, heater or blower": 93,
+  "Power windows": 87,
+  "Horn": 76,
+  "Trailer wiring": 32,
+  "Power outlet or lighter": 26
+ },
+ "fuse_top_model_years": [
+  {
+   "model": "2008 Buick Lucerne",
+   "n": 43
+  },
+  {
+   "model": "2009 Buick Lucerne",
+   "n": 40
+  },
+  {
+   "model": "2012 Chevrolet Malibu",
+   "n": 36
+  },
+  {
+   "model": "2013 Ford F-150",
+   "n": 33
+  },
+  {
+   "model": "2003 Ford Expedition",
+   "n": 23
+  },
+  {
+   "model": "2011 Ford Fiesta",
+   "n": 20
+  },
+  {
+   "model": "2010 Ford F-150",
+   "n": 15
+  },
+  {
+   "model": "2011 Chevrolet Malibu",
+   "n": 14
+  },
+  {
+   "model": "2010 Buick Lucerne",
+   "n": 14
+  },
+  {
+   "model": "2011 Dodge Ram 1500",
+   "n": 12
+  },
+  {
+   "model": "2012 Ford Fiesta",
+   "n": 11
+  },
+  {
+   "model": "2014 Ford F-150",
+   "n": 11
+  }
+ ],
+ "electrical_by_make": [
+  {
+   "make": "Chrysler",
+   "complaints": 21099,
+   "electrical": 8020,
+   "pct": 38.0,
+   "fuse": 58
+  },
+  {
+   "make": "Dodge",
+   "complaints": 36150,
+   "electrical": 11297,
+   "pct": 31.3,
+   "fuse": 199
+  },
+  {
+   "make": "Jeep",
+   "complaints": 46668,
+   "electrical": 13440,
+   "pct": 28.8,
+   "fuse": 98
+  },
+  {
+   "make": "Volkswagen",
+   "complaints": 16985,
+   "electrical": 3955,
+   "pct": 23.3,
+   "fuse": 105
+  },
+  {
+   "make": "Saturn",
+   "complaints": 3004,
+   "electrical": 692,
+   "pct": 23.0,
+   "fuse": 13
+  },
+  {
+   "make": "Buick",
+   "complaints": 6649,
+   "electrical": 1442,
+   "pct": 21.7,
+   "fuse": 140
+  },
+  {
+   "make": "Subaru",
+   "complaints": 18673,
+   "electrical": 3797,
+   "pct": 20.3,
+   "fuse": 18
+  },
+  {
+   "make": "Audi",
+   "complaints": 6936,
+   "electrical": 1360,
+   "pct": 19.6,
+   "fuse": 13
+  },
+  {
+   "make": "BMW",
+   "complaints": 16482,
+   "electrical": 3202,
+   "pct": 19.4,
+   "fuse": 47
+  },
+  {
+   "make": "Chevrolet",
+   "complaints": 70072,
+   "electrical": 13510,
+   "pct": 19.3,
+   "fuse": 262
+  },
+  {
+   "make": "Ram",
+   "complaints": 17493,
+   "electrical": 3193,
+   "pct": 18.3,
+   "fuse": 26
+  },
+  {
+   "make": "Tesla",
+   "complaints": 12151,
+   "electrical": 2154,
+   "pct": 17.7,
+   "fuse": 5
+  },
+  {
+   "make": "Honda",
+   "complaints": 50723,
+   "electrical": 8742,
+   "pct": 17.2,
+   "fuse": 56
+  },
+  {
+   "make": "Pontiac",
+   "complaints": 5533,
+   "electrical": 940,
+   "pct": 17.0,
+   "fuse": 28
+  },
+  {
+   "make": "Cadillac",
+   "complaints": 7075,
+   "electrical": 1167,
+   "pct": 16.5,
+   "fuse": 22
+  },
+  {
+   "make": "Mercedes-Benz",
+   "complaints": 15283,
+   "electrical": 2265,
+   "pct": 14.8,
+   "fuse": 24
+  },
+  {
+   "make": "GMC",
+   "complaints": 22078,
+   "electrical": 3267,
+   "pct": 14.8,
+   "fuse": 60
+  },
+  {
+   "make": "Hyundai",
+   "complaints": 37673,
+   "electrical": 5541,
+   "pct": 14.7,
+   "fuse": 52
+  },
+  {
+   "make": "Infiniti",
+   "complaints": 3684,
+   "electrical": 531,
+   "pct": 14.4,
+   "fuse": 3
+  },
+  {
+   "make": "Kia",
+   "complaints": 30404,
+   "electrical": 4370,
+   "pct": 14.4,
+   "fuse": 64
+  },
+  {
+   "make": "Nissan",
+   "complaints": 35534,
+   "electrical": 4614,
+   "pct": 13.0,
+   "fuse": 39
+  },
+  {
+   "make": "Mazda",
+   "complaints": 9373,
+   "electrical": 1204,
+   "pct": 12.8,
+   "fuse": 6
+  },
+  {
+   "make": "Lincoln",
+   "complaints": 5560,
+   "electrical": 683,
+   "pct": 12.3,
+   "fuse": 4
+  },
+  {
+   "make": "Acura",
+   "complaints": 7093,
+   "electrical": 859,
+   "pct": 12.1,
+   "fuse": 5
+  },
+  {
+   "make": "Ford",
+   "complaints": 130686,
+   "electrical": 14098,
+   "pct": 10.8,
+   "fuse": 253
+  },
+  {
+   "make": "Toyota",
+   "complaints": 47386,
+   "electrical": 5006,
+   "pct": 10.6,
+   "fuse": 19
+  },
+  {
+   "make": "Lexus",
+   "complaints": 6052,
+   "electrical": 531,
+   "pct": 8.8,
+   "fuse": 1
+  },
+  {
+   "make": "Mercury",
+   "complaints": 4009,
+   "electrical": 318,
+   "pct": 7.9,
+   "fuse": 3
+  }
+ ]
+}

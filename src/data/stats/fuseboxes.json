@@ -1,0 +1,101 @@
+{
+ "boxes": 608,
+ "model_years": 285,
+ "models": 78,
+ "makes": [
+  "Hyundai",
+  "Kia",
+  "Lexus",
+  "Toyota"
+ ],
+ "year_min": 2010,
+ "year_max": 2026,
+ "fuses": 20150,
+ "median_fuses": 75,
+ "max": {
+  "model": "2026 Kia Carnival Hybrid",
+  "fuses": 131
+ },
+ "min": {
+  "model": "2020 Kia Niro EV",
+  "fuses": 14
+ },
+ "boxes_per_model_year": {
+  "1": 49,
+  "2": 165,
+  "3": 55,
+  "4": 16
+ },
+ "amps": {
+  "10A": 25.9,
+  "7.5A": 15.4,
+  "15A": 12.9,
+  "30A": 11.4,
+  "20A": 11.1,
+  "25A": 6.9,
+  "40A": 4.8,
+  "50A": 4.7,
+  "60A": 2.9,
+  "80A": 1.4,
+  "5A": 1.4,
+  "100A": 0.3
+ },
+ "spare_pct": 2.4,
+ "by_period": {
+  "2010\u20132014": {
+   "model_years": 134,
+   "median": 73.0,
+   "mean": 68.1
+  },
+  "2015\u20132019": {
+   "model_years": 34,
+   "median": 69.0,
+   "mean": 68.5
+  },
+  "2020\u20132024": {
+   "model_years": 68,
+   "median": 76.0,
+   "mean": 69.1
+  },
+  "2025\u20132026": {
+   "model_years": 49,
+   "median": 86,
+   "mean": 81.4
+  }
+ },
+ "by_make": {
+  "Hyundai": {
+   "model_years": 86,
+   "median": 77.0
+  },
+  "Kia": {
+   "model_years": 44,
+   "median": 82.0
+  },
+  "Lexus": {
+   "model_years": 54,
+   "median": 86.0
+  },
+  "Toyota": {
+   "model_years": 101,
+   "median": 69
+  }
+ },
+ "systems": {
+  "Engine and fuel": 20.4,
+  "Heating and A/C": 15.5,
+  "Lights": 15.3,
+  "Windows and locks": 12.4,
+  "Seats": 7.2,
+  "Brakes": 6.5,
+  "Audio": 6.1,
+  "Dashboard": 6.0,
+  "Wipers": 5.3,
+  "Steering": 4.3,
+  "Power outlets": 3.6,
+  "Transmission": 3.2,
+  "Keys and immobiliser": 2.7,
+  "Airbags": 2.7,
+  "Horn": 2.1
+ }
+}

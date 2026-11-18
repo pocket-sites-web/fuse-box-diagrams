@@ -1,0 +1,94 @@
+---
+import Base from '../../../layouts/Base.astro';
+import '../../../styles/stats.css';
+import KeyStat from '../../../components/stats/KeyStat.astro';
+import Bars from '../../../components/stats/Bars.astro';
+import Cite from '../../../components/stats/Cite.astro';
+import { boxes as B, STATS_UPDATED_LABEL, SITE_NAME, articleLd, datasetLd, faqLd, n0 } from '../../../lib/stats';
+
+const path = '/statistics/fuse-box-facts/';
+const title = `How Many Fuses Does a Car Have? Fuse Box Statistics From ${B.model_years} Owner's Manuals`;
+const periods = B.by_period as Record<string, { model_years: number; median: number; mean: number }>;
+const pk = Object.keys(periods);
+const first = periods[pk[0]], last = periods[pk[pk.length - 1]];
+const rise = Math.round((100 * (last.median - first.median)) / first.median);
+const amps = B.amps as Record<string, number>;
+const systems = B.systems as Record<string, number>;
+const bpm = B.boxes_per_model_year as Record<string, number>;
+const multi = Math.round((100 * (B.model_years - (bpm['1'] ?? 0))) / B.model_years);
+const byMake = B.by_make as Record<string, { model_years: number; median: number }>;
+const makes = (B.makes as string[]).join(', ').replace(/, ([^,]*)$/, ' and $1');
+const description = `The median car in our data has ${B.median_fuses} fuses across ${Object.entries(bpm).sort((a, b) => b[1] - a[1])[0][0]} fuse boxes, and 2025 to 2026 models have ${rise}% more than 2010 to 2014 models. Original statistics from ${B.model_years} owner's manuals.`;
+const faq = [
+  ['How many fuses does a car have?', `In our data from ${B.model_years} ${makes} model years, the median is ${B.median_fuses} fuses. The fewest is ${B.min.fuses} (${B.min.model}) and the most is ${B.max.fuses} (${B.max.model}).`],
+  ['How many fuse boxes does a car have?', `Most cars have two: one under the hood and one inside the cabin. ${multi}% of the model years in our data have two or more, and some have four.`],
+  ['What is the most common car fuse rating?', `10 amps. ${amps['10A']}% of the fuses in our data are rated 10A, followed by 7.5A (${amps['7.5A']}%) and 15A (${amps['15A']}%).`],
+  ['Do newer cars have more fuses?', `Yes. The median 2025 to 2026 model year in our data has ${last.median} fuses, against ${first.median} for 2010 to 2014 models, a rise of ${rise}%.`],
+];
+const jsonLd = [...articleLd(path, title, description, 'Fuse box facts'),
+  datasetLd(path, 'Number of fuses and fuse boxes by car model year', `Fuse box and fuse counts for ${B.model_years} ${makes} model years (${B.year_min} to ${B.year_max}), transcribed from official owner's manuals by ${SITE_NAME}.`, ['/data/fuse-count-by-model-year.csv'], 'https://fuseboxdiagrams.com/sources/', `${B.year_min}/${B.year_max}`), faqLd(faq)];
+const periodRows = pk.map((p) => ({ label: p, value: periods[p].median, extra: n0(periods[p].model_years) }));
+const makeRows = Object.entries(byMake).sort((a, b) => b[1].median - a[1].median).map(([mk, v]) => ({ label: mk, value: v.median, extra: n0(v.model_years) }));
+const ampRows = Object.entries(amps).map(([a, v]) => ({ label: a, value: v }));
+const sysRows = Object.entries(systems).map(([k, v]) => ({ label: k, value: v }));
+const bpmRows = Object.entries(bpm).map(([k, v]) => ({ label: k === '1' ? '1 box' : `${k} boxes`, value: (100 * v) / B.model_years, extra: n0(v) }));
+---
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <section class="st-section">
+    <p class="crumbs"><a href="/">Home</a> › <a href="/statistics/">Statistics</a> › Fuse box facts</p>
+    <h1>How many fuses does a car have? Fuse box statistics</h1>
+    <p class="updated">Updated {STATS_UPDATED_LABEL} · Original data: {n0(B.fuses)} fuses in {n0(B.boxes)} fuse boxes from {B.model_years} owner's manuals</p>
+    <p class="lede">To draw our fuse box diagrams we transcribe every fuse from each car's official owner's manual. That gives us a dataset nobody else publishes: how many fuses and fuse boxes cars have, which amp ratings are most common and what the fuses protect. It covers {B.models} {makes} models from {B.year_min} to {B.year_max}.</p>
+    <nav class="toc" aria-label="On this page"><a href="#key-findings">Key findings</a><a href="#over-time">Over time</a><a href="#boxes">Fuse boxes per car</a><a href="#ratings">Amp ratings</a><a href="#systems">What fuses protect</a><a href="#methodology">Methodology</a><a href="#cite">Cite</a></nav>
+  </section>
+
+  <section class="st-section" id="key-findings">
+    <h2>Key findings</h2>
+    <ul class="kstats">
+      <KeyStat id="median-fuses" value={String(B.median_fuses)} source={`${SITE_NAME} data`}>fuses in the <b>median car</b> we cover, counting every fuse box.</KeyStat>
+      <KeyStat id="more-fuses" value={`+${rise}%`} source={`${SITE_NAME} data`}>more fuses in 2025 to 2026 models (median <b>{last.median}</b>) than in 2010 to 2014 models (median {first.median}).</KeyStat>
+      <KeyStat id="most-fuses" value={String(B.max.fuses)} source={`${SITE_NAME} data`}>fuses in the <b>{B.max.model}</b>, the most of any model year we cover. The fewest is the {B.min.model}, with {B.min.fuses}.</KeyStat>
+      <KeyStat id="multiple-boxes" value={`${multi}%`} source={`${SITE_NAME} data`}>of model years have <b>two or more fuse boxes</b>, usually one under the hood and one in the cabin.</KeyStat>
+      <KeyStat id="ten-amp" value={`${amps['10A']}%`} source={`${SITE_NAME} data`}>of fuses are rated <b>10 amps</b>, the most common rating, ahead of 7.5A ({amps['7.5A']}%) and 15A ({amps['15A']}%).</KeyStat>
+      <KeyStat id="engine-fuses" value={`${systems['Engine and fuel']}%`} source={`${SITE_NAME} data`}>of fuses protect <b>engine and fuel</b> circuits, more than any other system. Heating and A/C ({systems['Heating and A/C']}%) and lights ({systems['Lights']}%) come next.</KeyStat>
+    </ul>
+  </section>
+
+  <section class="st-section" id="over-time">
+    <h2>Fuse counts over time</h2>
+    <p>Median fuses per model year, all fuse boxes combined. Newer cars tend to add circuits for driver assistance cameras and radar, larger screens, heated and ventilated seats and hybrid systems.</p>
+    <Bars id="fuses-by-period" caption="Median number of fuses per model year, by period" rows={periodRows} format="count" valueLabel="Median fuses" extraLabel="Model years" />
+    <Bars id="fuses-by-make" caption="Median number of fuses per model year, by make" rows={makeRows} format="count" valueLabel="Median fuses" extraLabel="Model years" />
+  </section>
+
+  <section class="st-section" id="boxes">
+    <h2>Fuse boxes per car</h2>
+    <Bars id="fuse-boxes-per-car" caption="Number of fuse boxes per model year" rows={bpmRows} valueLabel="Share of model years" extraLabel="Model years" />
+  </section>
+
+  <section class="st-section" id="ratings">
+    <h2>Most common fuse ratings</h2>
+    <p>Share of all fuses with a listed rating. Small blade fuses (5A to 30A) protect individual circuits; larger ratings are usually cartridge or fusible-link fuses that protect whole groups of circuits.</p>
+    <Bars id="fuse-ratings" caption="Share of fuses by amp rating" rows={ampRows} valueLabel="Share of fuses" />
+  </section>
+
+  <section class="st-section" id="systems">
+    <h2>What car fuses protect</h2>
+    <p>Share of fuses whose circuit falls into each system. A fuse can serve more than one system, and some fuses (such as main feeds) aren't in any group.</p>
+    <Bars id="fuse-systems" caption="Share of fuses by system protected" rows={sysRows} valueLabel="Share of fuses" />
+    <p>Find a specific fuse: <a href="/makes/">browse fuse box diagrams by make</a>.</p>
+  </section>
+
+  <section class="st-section st-faq" id="faq"><h2>Questions</h2>{faq.map(([q, a]) => (<div><h3>{q}</h3><p>{a}</p></div>))}</section>
+
+  <section class="st-section methods" id="methodology">
+    <h2>Methodology</h2>
+    <p>Each fuse box on {SITE_NAME} is transcribed from the "Fuses" section of the vehicle's official owner's manual, including its amp rating and the circuits it protects. A model year counts every fuse box the manual lists, including spares. Systems are assigned by matching circuit names to groups.</p>
+    <p>The data covers {makes} only, {B.year_min} to {B.year_max}, and some model years are better represented than others. It describes the cars we cover, not every car on the road. We add makes over time and will update these figures.</p>
+    <h3>Sources</h3>
+    <ul class="st-small"><li>{SITE_NAME}, fuse data transcribed from manufacturers' owner's manuals. <a href="/sources/">Sources and method</a>.</li><li><a href="/data/fuse-count-by-model-year.csv" download>Download fuse counts by model year (CSV)</a>.</li></ul>
+  </section>
+
+  <Cite title="Car Fuse Box Statistics" path={path} />
+  <section class="st-section"><h2>More statistics</h2><ul class="st-links"><li><a href="/statistics/electrical-recalls/">Electrical system recalls</a></li><li><a href="/statistics/blown-fuse-complaints/">Blown fuse and electrical complaints</a></li><li><a href="/statistics/">All statistics</a></li></ul></section>
+</Base>
