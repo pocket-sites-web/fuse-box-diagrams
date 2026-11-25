@@ -14,7 +14,9 @@ export function getStaticPaths() {
 const { p, m } = Astro.props as { p: YearPage; m: Model };
 const name = `${p.year} ${p.make} ${p.model}`;
 const boxNames = p.boxes.map((b) => b.short.toLowerCase()).join(' and ');
-const title = `${name} Fuse Box Diagram (${p.boxes.map((b) => b.short).join(' & ')})`;
+const runT = yearRuns(m).find((r) => p.year >= r.from && p.year <= r.to)!;
+const titleName = runT.from === p.year && runT.to > p.year ? `${runT.from}-${runT.to} ${p.make} ${p.model}` : name;
+const title = `${titleName} Fuse Box Diagram (${p.boxes.map((b) => b.short).join(' & ')})`;
 const fuseCount = p.boxes.reduce((a, b) => a + b.fuses.filter((f) => f.type !== 'relay').length, 0);
 const description = `Clickable ${name} fuse box diagrams for the ${boxNames}: all ${fuseCount} fuses with amps and what each one protects, from the owner's manual.`;
 
