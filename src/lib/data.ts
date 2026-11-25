@@ -159,3 +159,56 @@ export const sortSlots = (a: string, b: string) => {
   const ra = a.startsWith('R') ? 1 : 0, rb = b.startsWith('R') ? 1 : 0;
   return ra - rb || parseFloat(a.replace(/\D+/g, '')) - parseFloat(b.replace(/\D+/g, '')) || a.localeCompare(b);
 };
+
+// ---- Year-to-year comparison -------------------------------------------------------------
+const fuseKey = (b: Box, f: Fuse) => `${b.short}|${f.slot}`;
+const fingerprint = (p: YearPage) =>
+  JSON.stringify(p.boxes.map((b) => [b.short, b.fuses.map((f) => [f.slot, f.amps, f.type, f.circuit.toLowerCase(), f.only ?? ''])]));
+
+export interface YearRun { from: number; to: number; first: YearPage }
+
+// Consecutive years whose fuse boxes are identical, oldest first.
+export function yearRuns(m: Model): YearRun[] {
+  const ys = [...m.years].sort((a, b) => a.year - b.year);
+  const runs: YearRun[] = [];
+  for (const p of ys) {
+    const r = runs[runs.length - 1];
+    if (r && r.to === p.year - 1 && fingerprint(r.first) === fingerprint(p)) r.to = p.year;
+    else runs.push({ from: p.year, to: p.year, first: p });
+  }
+  return runs;
+}
+
+// A year page whose fuses are identical to the year before repeats that page word for word.
+// It stays on the site for visitors but is noindexed so Google indexes one page per layout.
+export function sameAsYear(m: Model, p: YearPage): number | null {
+  const run = yearRuns(m).find((r) => p.year >= r.from && p.year <= r.to)!;
+  return run.from === p.year ? null : run.from;
+}
+
+export interface FuseChange { box: string; slot: string; kind: 'added' | 'removed' | 'amps' | 'circuit'; before?: string; after?: string }
+
+// What differs between two years: fuses added, removed, re-rated or given a new job.
+export function compareYears(prev: YearPage, cur: YearPage): FuseChange[] {
+  const a = new Map(prev.boxes.flatMap((b) => b.fuses.map((f) => [fuseKey(b, f), { b, f }] as const)));
+  const c = new Map(cur.boxes.flatMap((b) => b.fuses.map((f) => [fuseKey(b, f), { b, f }] as const)));
+  const out: FuseChange[] = [];
+  const amps = (f: Fuse) => (f.amps ? `${f.amps}A` : f.type === 'relay' ? 'relay' : '–');
+  for (const [k, { b, f }] of c) {
+    const o = a.get(k);
+    if (!o) out.push({ box: b.short, slot: f.slot, kind: 'added', after: `${f.circuit} (${amps(f)})` });
+    else if (o.f.circuit.toLowerCase() !== f.circuit.toLowerCase()) out.push({ box: b.short, slot: f.slot, kind: 'circuit', before: o.f.circuit, after: f.circuit });
+    else if (o.f.amps !== f.amps) out.push({ box: b.short, slot: f.slot, kind: 'amps', before: amps(o.f), after: amps(f) });
+  }
+  for (const [k, { b, f }] of a) if (!c.has(k)) out.push({ box: b.short, slot: f.slot, kind: 'removed', before: `${f.circuit} (${amps(f)})` });
+  return out;
+}
+
+// True when two years list their boxes so differently that a fuse-by-fuse comparison means nothing
+// (different box names, or more than half the fuses differ).
+export function isNewLayout(prev: YearPage, cur: YearPage): boolean {
+  const names = (p: YearPage) => p.boxes.map((b) => b.short).sort().join('|');
+  if (names(prev) !== names(cur)) return true;
+  const total = cur.boxes.reduce((a, b) => a + b.fuses.length, 0);
+  return compareYears(prev, cur).length > total / 2;
+}

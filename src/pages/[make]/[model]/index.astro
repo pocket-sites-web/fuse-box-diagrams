@@ -1,12 +1,22 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import { getMakes, yearRange, type Model } from '../../../lib/data';
+import { getMakes, yearRange, yearRuns, compareYears, isNewLayout, type Model } from '../../../lib/data';
 export function getStaticPaths() {
   return getMakes().flatMap((mk) => mk.models.map((m) => ({ params: { make: mk.makeSlug, model: m.modelSlug }, props: { m } })));
 }
 const { m } = Astro.props as { m: Model };
 const name = `${m.make} ${m.model}`;
 const range = yearRange(m);
+const runs = yearRuns(m);
+const span = (r: { from: number; to: number }) => (r.from === r.to ? `${r.from}` : `${r.from} to ${r.to}`);
+const rows = runs.map((r, i) => ({
+  r,
+  fuses: r.first.boxes.reduce((a, b) => a + b.fuses.filter((f) => f.type !== 'relay').length, 0),
+  relays: r.first.boxes.reduce((a, b) => a + b.fuses.filter((f) => f.type === 'relay').length, 0),
+  changed: i > 0 ? compareYears(runs[i - 1].first, r.first).length : null,
+  fresh: i > 0 && isNewLayout(runs[i - 1].first, r.first),
+  gap: i > 0 && runs[i - 1].to !== r.from - 1,
+}));
 ---
 <Base title={`${name} Fuse Box Diagram (${range}): Every Year`} description={`${name} fuse box diagrams for ${range}. Pick your year to see the interior and under-hood fuse boxes, with amps and what each fuse protects.`}>
   <section>
@@ -14,5 +24,26 @@ const range = yearRange(m);
     <h1>{name} fuse box diagram ({range})</h1>
     <p class="lede">Pick your year. Each page has clickable diagrams of every fuse box on that year's {m.model}, drawn from its owner's manual.</p>
   </section>
+  <section>
+    <h2>{m.model} fuse layouts by year</h2>
+    <p>{runs.length === 1 ? `The ${m.model} uses the same fuse layout in every year we have (${range}).` : `We have ${m.years.length} years of the ${m.model}, which use ${runs.length} different fuse layouts. Years in the same row share identical fuse boxes.`}</p>
+    <div class="table-wrap tablewrap">
+      <table>
+        <thead><tr><th>Years</th><th>Fuse boxes</th><th>Fuses</th><th>Relays</th><th>Changes from previous</th></tr></thead>
+        <tbody>
+          {rows.map(({ r, fuses, relays, changed, gap, fresh }) => (
+            <tr>
+              <td><a href={`/${m.makeSlug}/${m.modelSlug}/${r.from}/`}>{span(r)}</a></td>
+              <td>{r.first.boxes.map((b) => b.short).join(', ')}</td>
+              <td>{fuses}</td>
+              <td>{relays}</td>
+              <td>{changed === null ? 'First year we have' : fresh ? 'New layout' : gap ? `${changed} (some years missing between)` : `${changed} ${changed === 1 ? 'fuse' : 'fuses'}`}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <h2>All years</h2>
   <ul class="link-grid">{m.years.map((y) => <li><a href={`/${m.makeSlug}/${m.modelSlug}/${y.year}/`}>{y.year} {m.model}<span class="sub">{y.boxes.map((b) => b.short).join(' · ')}</span></a></li>)}</ul>
 </Base>

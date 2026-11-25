@@ -1,6 +1,6 @@
 ---
 import Base from '../../../../layouts/Base.astro';
-import { getMakes, getLayout, fuseColour, isBlade, isNumbered, sortSlots, TYPE_NAMES, LEGENDS, type YearPage, type Model } from '../../../../lib/data';
+import { getMakes, getLayout, yearRuns, sameAsYear, compareYears, isNewLayout, fuseColour, isBlade, isNumbered, sortSlots, TYPE_NAMES, LEGENDS, type YearPage, type Model } from '../../../../lib/data';
 import { boxSvg, partIcon, locatorSvg } from '../../../../lib/fusebox';
 import { amazonUrl, SITE_URL } from '../../../../lib/site';
 
@@ -14,7 +14,9 @@ export function getStaticPaths() {
 const { p, m } = Astro.props as { p: YearPage; m: Model };
 const name = `${p.year} ${p.make} ${p.model}`;
 const boxNames = p.boxes.map((b) => b.short.toLowerCase()).join(' and ');
-const title = `${name} Fuse Box Diagram (${p.boxes.map((b) => b.short).join(' & ')})`;
+const runT = yearRuns(m).find((r) => p.year >= r.from && p.year <= r.to)!;
+const titleName = runT.from === p.year && runT.to > p.year ? `${runT.from}-${runT.to} ${p.make} ${p.model}` : name;
+const title = `${titleName} Fuse Box Diagram (${p.boxes.map((b) => b.short).join(' & ')})`;
 const fuseCount = p.boxes.reduce((a, b) => a + b.fuses.filter((f) => f.type !== 'relay').length, 0);
 const description = `Clickable ${name} fuse box diagrams for the ${boxNames}: all ${fuseCount} fuses with amps and what each one protects, from the owner's manual.`;
 
@@ -49,8 +51,14 @@ const jsonLd = [
   },
 ];
 const years = [...m.years].sort((a, b) => a.year - b.year);
+const run = yearRuns(m).find((r) => p.year >= r.from && p.year <= r.to)!;
+const dupOf = sameAsYear(m, p);
+const prev = years.filter((y) => y.year < p.year).pop();
+const changes = prev ? compareYears(prev, p) : [];
+const newLayout = prev ? isNewLayout(prev, p) : false;
+const kindText = { added: 'New', removed: 'Removed', amps: 'Rating changed', circuit: 'Now protects' } as const;
 ---
-<Base title={title} description={description} jsonLd={jsonLd}>
+<Base title={title} description={description} jsonLd={jsonLd} noindex={dupOf !== null}>
   <section>
     <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a>›<a href={`/${p.makeSlug}/`}>{p.make}</a>›<a href={`/${p.makeSlug}/${p.modelSlug}/`}>{p.model}</a>›<span>{p.year}</span></nav>
     <h1>{name} Fuse Box Diagram</h1>
@@ -59,6 +67,9 @@ const years = [...m.years].sort((a, b) => a.year - b.year);
       {years.map((y) => (y.year === p.year ? <span class="cur" aria-current="page">{y.year}</span> : <a href={`/${p.makeSlug}/${p.modelSlug}/${y.year}/`}>{y.year}</a>))}
       <a href={`/${p.makeSlug}/${p.modelSlug}/`}>All years</a>
     </div>
+    {run.from !== run.to && (
+      <p class="small" style="margin-top:12px"><strong>Same fuses {run.from} to {run.to}.</strong> The {p.model}'s fuse boxes are identical in every year from {run.from} to {run.to}, so this diagram works for all of them.{dupOf !== null && <> The full write-up is on the <a href={`/${p.makeSlug}/${p.modelSlug}/${dupOf}/`}>{dupOf} {p.model} page</a>.</>}</p>
+    )}
   </section>
 
   <div class="fb" id="fb" data-boxes={JSON.stringify(boxes)}>
@@ -118,6 +129,32 @@ const years = [...m.years].sort((a, b) => a.year - b.year);
       </section>
     ))}
   </div>
+
+  {prev && (
+  <section id="changes">
+    <h2>What changed from the {prev.year} {p.model}</h2>
+    {newLayout ? (
+      <p>The {p.year} uses a different fuse box layout from the <a href={`/${p.makeSlug}/${p.modelSlug}/${prev.year}/`}>{prev.year} {p.model}</a> ({prev.boxes.map((b) => b.short.toLowerCase()).join(', ')} in {prev.year}; {p.boxes.map((b) => b.short.toLowerCase()).join(', ')} in {p.year}). A diagram from another year may not match yours.</p>
+    ) : changes.length === 0 ? (
+      <p>Nothing. Every fuse and relay is the same as on the <a href={`/${p.makeSlug}/${p.modelSlug}/${prev.year}/`}>{prev.year} {p.model}</a>.</p>
+    ) : (
+      <>
+      <p>{changes.length} {changes.length === 1 ? 'fuse differs' : 'fuses differ'} from the <a href={`/${p.makeSlug}/${p.modelSlug}/${prev.year}/`}>{prev.year} {p.model}</a>. Worth checking if you're using a diagram from another year.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Box</th><th>No.</th><th>Change</th><th>{prev.year}</th><th>{p.year}</th></tr></thead>
+          <tbody>
+            {changes.slice(0, 40).map((c) => (
+              <tr><td>{c.box}</td><td class="no">{c.slot}</td><td>{kindText[c.kind]}</td><td>{c.before ?? '–'}</td><td>{c.after ?? '–'}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {changes.length > 40 && <p class="small muted">Showing 40 of {changes.length} changes.</p>}
+      </>
+    )}
+  </section>
+  )}
 
   <section class="legend">
     <div class="card"><h3>Blade fuse colours</h3><ul>{Object.entries(LEGENDS.blade).filter(([a]) => +a >= 5).sort((a, b) => +a[0] - +b[0]).map(([a, [c, n]]) => <li><i style={`background:${c}`}></i>{a}A {n}</li>)}</ul></div>
